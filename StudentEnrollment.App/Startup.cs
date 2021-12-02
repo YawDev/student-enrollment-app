@@ -89,7 +89,7 @@ namespace StudentEnrollment.App
             services.AddScoped<IHttpClientService, HttpClientService>();
             services.AddHttpClient<IHttpClientService, HttpClientService>(options =>
             {
-                options.BaseAddress = new Uri("https://localhost:5001/student-enrollment/");
+                options.BaseAddress = new Uri("https://localhost:9999/student-enrollment/");
             })
             .ConfigureHttpMessageHandlerBuilder(builder => 
             {
