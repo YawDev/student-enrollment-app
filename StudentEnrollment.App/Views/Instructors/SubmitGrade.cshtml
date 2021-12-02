@@ -1,0 +1,59 @@
+@model SubmitGradeViewModel
+
+@{
+    ViewData["Title"] = "Submit Grade ";
+}
+@if(!String.IsNullOrEmpty(ViewBag.Message))
+{
+     <div class="alert alert-success" style="text-align: left;">@ViewBag.Message</div>
+}
+
+<h2 style="text-align: center;">Submit Grade</h2>
+<form asp-action="SubmitGrade" method="post" role="form">
+
+
+                
+                <div class="form-outline mb-4">
+
+                    <label asp-for="@Model.Dto.LetterGrade">Letter Grade
+                    </label>
+                    <select asp-for="@Model.Dto.LetterGrade" asp-items="@(new SelectList(Model.LetterGradeSelect))" class="form-control"></select>
+                    <span asp-validation-for="@Model.Dto.LetterGrade" class="text-danger"></span></div>
+                 <div class="form-group">
+                    
+                    <label asp-for="@Model.Dto.GradePoint">Grade Point
+                    </label>
+                    <input  asp-for="@Model.Dto.GradePoint" class="form-control"/></input>
+                    <span asp-validation-for="@Model.Dto.GradePoint" class="text-danger"></span>
+                </div>
+
+                 <div class="form-group">
+                    <input  type="hidden"  asp-for="@Model.Dto.enrollmentId" class="form-control"/></input>
+                    <span asp-validation-for="@Model.Dto.enrollmentId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <input  type="hidden"  asp-for="@Model.courseId" class="form-control"/></input>
+                    <span asp-validation-for="@Model.courseId" class="text-danger"></span>
+                </div>
+
+                 <div class="form-group">
+                    <input  type="hidden"  asp-for="@Model.courseIdParameter" class="form-control"/></input>
+                    <span asp-validation-for="@Model.courseIdParameter" class="text-danger"></span>
+                </div>
+
+
+                
+                
+                
+            <button type="submit" class="btn btn-success">Submit Grade</button><br> 
+            
+            
+        </form>
+        <br>
+        <a class="btn btn-info btn-sm"
+                      asp-controller="Instructors"
+                      asp-action="CourseDetails"
+                      asp-route-id="@Model.courseId">Back</a>
+
+        

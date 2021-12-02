@@ -1,0 +1,58 @@
+@using StudentEnrollment.Enum
+@model UploadStatusViewModel
+
+
+@{
+    ViewData["Title"] = "Uploads";
+}
+
+
+<h1 style="text-align: center;">Uploads</h1>
+</br>
+@if(!(Model.uploads.Count == 0))
+{
+  <table class="table">
+    <tr>
+      <th scope="col">Course Name</th>
+      <th scope="col">Upload Date</th>
+      <th scope="col">Status</th>
+        <th scope="col">Errors</th>
+    </tr>
+  <tbody>
+
+         @foreach (var item in Model.uploads)
+        {
+    <tr>
+      <td>@item.CourseName</td>
+      <td>@item.TimeGenerated</td>
+      <td>
+        @if(item.UploadStatus == "Success")
+        {<p style="color: green;">
+          @item.UploadStatus
+        </p>
+        }
+        else
+        {
+          <p style="color: red;">
+          @item.UploadStatus
+        </p>
+        }
+      </td>
+      @if(item.Errors.Count > 0)
+      {
+        <td>
+            <a class="btn btn-danger btn-sm" 
+                      asp-controller="Courses"
+                      asp-action="LogErrors"
+                      asp-route-id="@item.Id"> View Errors</a>
+           </td>
+      }
+    </tr>
+        }
+  </tbody>
+</table>
+}
+else
+{
+  <p>No Uploads are available.</p>
+}

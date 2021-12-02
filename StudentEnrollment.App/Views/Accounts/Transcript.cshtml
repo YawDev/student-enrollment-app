@@ -1,0 +1,42 @@
+@model TranscriptViewModel
+@using StudentEnrollment.Core.Dtos;
+
+
+
+<h1 style="text-align: center;">Transcript</h1>
+</br>
+@if(!(Model.Enrollments.Count == 0))
+{
+  <table class="table">
+  <thead class="thead-light">
+    <tr>
+      <th scope="col">Course</th>
+      <th scope="col">Section</th>
+      <th scope="col">Instructor</th>
+      <th scope="col">Letter Grade</th>
+      <th scope="col">Grade Point</th>
+      <th scope="col">Semester</th>
+      <th scope="col">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+
+         @foreach (var item in Model.Enrollments)
+        {
+    <tr>
+      <td>@item.Course?.Name</td>
+      <td>@item.Course?.Section</td>
+      <td>@item.Course?.Instructor</td>
+      <td>@item.LetterGrade</td>
+      <td>@item.GradePoint</td>
+      <td>@item.Semester</td>
+      <td>@item.Status</td>
+    </tr>
+        }
+  </tbody>
+</table>
+}
+else
+{
+  <p>No enrollments are available.</p>
+}

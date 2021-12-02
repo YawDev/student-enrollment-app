@@ -1,0 +1,31 @@
+@model UpdateDepartmentDto
+@using StudentEnrollment.Core.Dtos;
+
+
+
+@{
+    ViewData["Title"] = "Departments";
+}
+
+<style type="text/css">
+body {
+    text-align: center;
+}
+form {
+    display: inline-block;
+}
+</style>
+
+
+<h1>Edit Department</h1>
+<div class="form-outline">
+<form asp-action="Update" asp-route-id="@Model.Id" method="post" role="form text-center">
+                <div class="form-group col-md-12">
+
+                    <label asp-for="Title">Title
+                    </label>
+                    <input asp-for="Title" class="form-control">
+                    <span asp-validation-for="Title" class="text-danger"></span></div>     
+            <button type="submit" class="btn btn-success text-center" >Save</button><br>
+            </form>
+              </div>

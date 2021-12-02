@@ -1,0 +1,34 @@
+@model UploadErrorsViewModel
+
+
+@{
+    ViewData["Title"] = "Log Details";
+}
+
+
+
+<h1 style="text-align: center;">Log Details</h1>
+</br>
+@if(!(Model.Errors.Count == 0))
+{
+  <table class="table">
+    <tr>
+      <th scope="col">Error Message</th>
+      
+    </tr>
+  <tbody>
+
+         @foreach (var item in Model.Errors)
+        {
+    <tr>
+      <td>@item.ErrorMessage</td>
+      
+    </tr>
+        }
+  </tbody>
+</table>
+}
+else
+{
+  <p>No Errors.</p>
+}

@@ -1,0 +1,42 @@
+@model LoginDto
+@using  StudentEnrollment.Core.Dtos;
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<style>
+    .form-control {
+    min-width: 0;
+    width: auto;
+    display: inline;
+}
+</style>
+
+<form asp-action="Login" method="post" role="form">
+
+
+           <h3> Login</h3><br>
+
+                <div class="form-group">
+                    
+                    <label asp-for="UserName">Username</label>
+                    <input asp-for="UserName" class="form-control"/>
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Password"></label>
+                    <input asp-for="Password" class="form-control"/>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div><br>
+
+        
+                
+            <button type="submit" class="btn btn-primary">Sign In</button><br>
+        </form>
+    <br></br>
+    <a asp-controller="Accounts" asp-action="ResetPassword">Forgot Password?</a>  
+
+
+

@@ -1,0 +1,47 @@
+@model CourseByInstructorDto
+@using  StudentEnrollment.Core.Dtos;
+
+@{
+    ViewData["Title"] = "Course Details";
+}
+
+
+<h2 style="text-align: center;">@Model.Name -  @Model.Section</h2>
+
+@if(Model.StudentsEnrolled.Count is 0)
+{
+    <p style="text-align: center;">No Students have enrolled in this Course</p>
+}
+else
+{
+<table class="table">  <thead class="thead-light">
+
+    <tr>
+        <th >Student</th>
+         <th>Letter Grade</th>
+      <th >Grade Point</th>
+      <th >Status</th>
+      <th></th>
+     
+    </tr></thead>
+  <tbody>
+  
+        @foreach (var item in Model.StudentsEnrolled)
+        {
+              <tr>
+                  <td> @item.Student.FirstName  @item.Student.LastName</td>
+                  <td>@item.LetterGrade</td>
+                  <td>@item.GradePoint</td>
+                  <td> @item.Status</td>
+                  <td>
+                      <a class="btn btn-info btn-sm"
+                      asp-controller="Instructors"
+                      asp-action="SubmitGrade"
+                      asp-route-id="@item.Id">Submit Grade</a>
+                  </td>
+                  </tr>
+
+        }
+  </tbody>
+</table>
+}

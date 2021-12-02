@@ -1,0 +1,35 @@
+@model AddDepartmentDto
+@using StudentEnrollment.Core.Dtos;
+
+
+@{
+    ViewData["Title"] = "Departments";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.14.0/jquery.validate.min.js"></script>
+<style type="text/css">
+body {
+    text-align: center;
+}
+form {
+    display: inline-block;
+}
+</style>
+@if(!String.IsNullOrEmpty(ViewBag.Message))
+{
+     <div class="alert alert-danger" style="text-align: left;">@ViewBag.Message</div>
+}
+
+<h1>Add Department</h1>
+<div class="form-outline">
+<form id="AddDepartmentForm" asp-action="Add" method="post" role="form text-center">
+                <div class="form-group col-md-12">
+
+                    <label asp-for="Title">Title
+                    </label>
+                    <input asp-for="Title" class="form-control">
+                    <span asp-validation-for="Title" class="text-danger"></span></div>     
+            <button type="submit" class="btn btn-success text-center" >Save</button><br>
+            </form>
+              </div>
+

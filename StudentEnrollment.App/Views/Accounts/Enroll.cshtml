@@ -1,0 +1,42 @@
+@model EnrollViewModel
+@using StudentEnrollment.Core.Dtos;
+
+
+@{
+    ViewData["Title"] = "Enroll";
+}
+<style type="text/css">
+body {
+    text-align: center;
+}
+form {
+    display: inline-block;
+}
+</style>
+@if(!String.IsNullOrEmpty(ViewBag.Message))
+{
+     <div class="alert alert-danger" style="text-align: left;">@ViewBag.Message</div>
+}
+<form asp-action="Enroll" method="post" role="form">
+
+
+                <div class="form-group">
+                    
+                    <label asp-for="@Model.Dto.CourseName">Course Name
+                    </label>
+                    <input  asp-for="@Model.Dto.CourseName" class="form-control"/></input>
+                    <span asp-validation-for="@Model.Dto.CourseName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    
+                    <label asp-for="@Model.Dto.Section">Section
+                    </label>
+                    <input  asp-for="@Model.Dto.Section" class="form-control"/></input>
+                    <span asp-validation-for="@Model.Dto.Section" class="text-danger"></span>
+                </div>
+
+                
+                
+                
+            <button type="submit" class="btn btn-primary">Enroll in Course</button><br>
+        </form>

@@ -1,0 +1,37 @@
+@model InstructorDetailDto
+@using  StudentEnrollment.Core.Dtos;
+
+@{
+    ViewData["Title"] = "Manage GradeBook ";
+}
+
+
+<h2 style="text-align: center;">Manage GradeBook</h2>
+<table class="table">  <thead class="thead-light">
+
+    <tr>
+         <th>Title</th>
+      <th >Course Name</th>
+      <th >Section</th>
+      <th></th>
+     
+    </tr></thead>
+  <tbody>
+  
+        @foreach (var item in Model.CoursesInstructed)
+        {
+              <tr>
+                  <td>@item.Title</td>
+                  <td>@item.Name</td>
+                  <td> @item.Section</td>
+                  <td>
+                      <a class="btn btn-info btn-sm"
+                      asp-controller="Instructors"
+                      asp-action="CourseDetails"
+                      asp-route-id="@item.Id">Manage Grades</a>
+                  </td>
+                  </tr>
+
+        }
+  </tbody>
+</table>

@@ -1,0 +1,56 @@
+@model StudentDetailsDto
+@using StudentEnrollment.Core.Dtos;
+
+
+@{
+    ViewData["Title"] = "Student Details";
+}
+
+<h6>Last Sync: @Model.StudentSyncLog?.TimeGenerated</h6>
+
+
+              
+
+                
+                
+
+<h1 style="text-align: center;">Student Details</h1>
+</br>
+<table class="table">
+  <thead class="thead-light">
+    <tr>
+      <th scope="col">First</th>
+      <th scope="col">Last</th>
+      <th scope="col">Email</th>
+      <th scope="col">Current Credits</th>
+      <th scope="col">Registration Status</th>
+      <th scope="col">GPA</th>
+      <th scope="col">Academic Standing</th>
+      <th scope="col">Student Class Level</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>@Model.Firstname</td>
+      <td>@Model.Lastname</td>
+      <td>@Model.Email</td>
+      <td>@Model.InProgressCredits</td>
+      <td>@Model.RegistrationStatus</td>
+      <td>@Model.GPA</td>
+      <td>@Model.AcademicStanding</td>
+      <td>@Model.StudentStatus</td>
+    </tr>
+  </tbody>
+</table>
+
+                   <a class="btn btn-primary btn"
+                      asp-controller="Accounts"
+                      asp-action="ViewTranscript"
+                      asp-route-id="@Model.Id"> View Transcript
+                </a>
+
+                 <a class="btn btn-primary btn"
+                      asp-controller="Accounts"
+                      asp-action="Enroll"
+                      asp-route-id="@Model.Id"> Enroll in Course
+                </a>

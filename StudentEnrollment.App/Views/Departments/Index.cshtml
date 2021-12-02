@@ -1,0 +1,179 @@
+@model DepartmentsViewModel
+@using Microsoft.AspNetCore.Identity
+@using StudentEnrollment.Entities
+@using StudentEnrollment.Store.Enums
+
+
+@{
+    ViewData["Title"] = "Departments";
+    var Authorized = UserManager.GetUserAsync(User).Result.Permission == Permissions.AdminPermissions;
+}
+
+<style>
+table { 
+    border: 1px solid #ddd;
+    border-collapse: separate;
+    border-left: 0;
+    border-radius: 4px;
+    border-spacing: 0px;
+}
+thead {
+    display: table-header-group;
+    vertical-align: middle;
+    border-color: inherit;
+    border-collapse: separate;
+}
+tr {
+    display: table-row;
+    vertical-align: inherit;
+    border-color: inherit;
+}
+th, td {
+    padding: 5px 4px 6px 4px; 
+    text-align: left;
+    vertical-align: top;
+    border-left: 1px solid #ddd;    
+}
+td {
+    border-top: 1px solid #ddd;    
+}
+thead:first-child tr:first-child th:first-child, tbody:first-child tr:first-child td:first-child {
+    border-radius: 4px 0 0 0;
+}
+thead:last-child tr:last-child th:first-child, tbody:last-child tr:last-child td:first-child {
+    border-radius: 0 0 0 4px;
+}
+</style>
+
+@inject UserManager<RequestUser> UserManager
+
+
+
+@if(Authorized){
+<a class="btn btn-primary btn-sm"
+asp-action="Add"> Add Department
+                </a>
+
+<a class="btn btn-primary btn-sm"
+asp-controller="Courses"
+asp-action="UploadCourses"> Upload from CSV
+                </a>
+
+<a class="btn btn-info btn-sm"
+asp-controller="Courses"
+asp-action="UploadCourseLogs"> Check Upload Status
+                </a>
+
+}
+     
+<br> </br>
+@if(Authorized){
+        <table class="table table-bordered">
+  <thead class="thead-light">
+
+    <tr>
+      <th >Department Name</th>
+      <th >Number of Courses</th>
+      <th ></th>
+      <th ></th>
+    </tr></thead>
+  <tbody>
+  
+        @foreach (var item in Model.Departments)
+        {
+              <tr>
+                  <td>@item.Title</td>
+                  <td>@item.NumberOfCourses</td>
+                  <td> 
+
+           
+               <a class="btn btn-danger btn-sm"
+                      asp-controller="Departments"
+                      asp-action="Delete"
+                      asp-route-id="@item.Id">Delete</a>
+             
+                      
+                 <a class="btn btn-info btn-sm"
+                      asp-controller="Departments"
+                      asp-action="Details"
+                      asp-route-id="@item.Id"> Details
+                </a></td>
+                <td>
+             
+             <a class="btn btn-success btn-sm"
+                      asp-controller="Courses"
+                      asp-action="Add"
+                      asp-route-id="@item.Id" > Add Course 
+                  </a>
+                     
+                  
+                  
+                </td>
+                </tr>
+
+        }
+  </tbody>
+</table><br>
+}
+
+
+@foreach (var item in Model.Departments)
+{
+  <div class="text-center">
+    <div class="text-center">
+   
+    @if(item.Courses.Count != 0)
+    {
+       <h4>@item.Title</h4>
+       
+          <table class="table table-bordered">
+  <thead class="thead-light">
+    <tr>
+      <th >Name</th>
+      <th >Title</th>
+      <th >Section</th>
+      <th >Instructor</th>
+      <th >Credits</th>
+      <th >Start Time</th>
+      <th >End Time</th>
+      <th >Remaining Slots</th>
+      <th >Capacity</th>
+      @if(Authorized){<th></th>}
+    </tr></thead>
+  <tbody>
+  
+        @foreach (var course in item.Courses)
+        {
+              <tr>
+                  <td>@course.Name</td>
+                  <td>@course.Title</td>
+                  <td>@course.Section</td>
+                <td>@course.Instructor</td>                    
+                  <td>@course.Credits</td>
+                  <td>@course.StartTime</td>
+                  <td>@course.EndTime</td>
+                  <td>@course.RemainingSlots</td>
+                  <td>@course.Capacity</td>
+                  @if(Authorized){
+                  <td>
+                      <a class="btn btn-danger btn-sm"
+                      asp-controller="Courses"
+                      asp-action="Delete"
+                      asp-route-id="@course.Id">Delete</a>
+                  </td>}
+                </tr>
+
+        }
+  </tbody>
+</table><br>
+    }
+    
+    
+
+</div>
+</div>
+
+}
+
+
+

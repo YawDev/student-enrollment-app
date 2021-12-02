@@ -1,0 +1,111 @@
+@model AddCourseViewModel
+
+
+@{
+    ViewData["Title"] = "Courses";
+}
+
+<style type="text/css">
+body {
+    text-align: center;
+}
+form {
+    display: inline-block;
+}
+</style>
+@if(!String.IsNullOrEmpty(ViewBag.Message))
+{
+     <div class="alert alert-danger" style="text-align: left;">@ViewBag.Message</div>
+}
+<div class="text-center">
+    <h1 class="display-4">Add a Course</h1>
+</div>
+
+<div class="form-outline">
+
+<form asp-action="Add" method="post" role="form text-center">
+
+               
+                   <div class="form-group">
+
+                    <label asp-for="@Model.Dto.Name">Name
+                    </label>
+                    <input asp-for="@Model.Dto.Name" class="form-control">
+                    <span asp-validation-for="@Model.Dto.Name" class="text-danger"></span></div>
+
+                <div class="form-group">
+
+                    <label asp-for="@Model.Dto.Title">Title
+                    </label>
+                    <input asp-for="@Model.Dto.Title" class="form-control">
+                    <span asp-validation-for="@Model.Dto.Title" class="text-danger"></span></div>
+
+                <div class="form-group">
+
+                    <label asp-for="@Model.Dto.Abbreviation">Abbreviation
+                    </label>
+                    <input asp-for="@Model.Dto.Abbreviation" class="form-control">
+                    <span asp-validation-for="@Model.Dto.Abbreviation" class="text-danger"></span></div>
+
+
+                <div class="form-group">
+                    <label asp-for="@Model.Dto.Section">Section
+                    </label>
+                    <input asp-for="@Model.Dto.Section" class="form-control">
+                    <span asp-validation-for="@Model.Dto.Section" class="text-danger"></span></div>
+
+
+                <div class="form-group">
+
+                    <label asp-for="@Model.Dto.CourseNumber">Course Number
+                    </label>
+                    <input asp-for="@Model.Dto.CourseNumber" class="form-control">
+                    <span asp-validation-for="@Model.Dto.CourseNumber" class="text-danger"></span></div>
+                <div class="form-group">
+
+                    <label asp-for="@Model.Dto.Department">Department
+                    </label>
+                    <input asp-for="@Model.Dto.Department" class="form-control" readonly>
+                    <span asp-validation-for="@Model.Dto.Department" class="text-danger"></span></div>
+
+                <div class="form-group">
+
+                    <label asp-for="@Model.Dto.InstructorName">Instructor Name
+                    </label>
+                    <select asp-for="@Model.Dto.InstructorName" asp-items="@(new SelectList(Model.InstructorsListItems, "FirstName","LastName"))" class="form-control"></select>
+                    <span asp-validation-for="@Model.Dto.InstructorName" class="text-danger"></span></div>
+
+
+      
+
+
+<div class="form-outline mb-4">
+
+                    <label asp-for="@Model.Dto.Credits">Credits
+                    </label>
+                    <input asp-for="@Model.Dto.Credits" class="form-control">
+                    <span asp-validation-for="@Model.Dto.Credits" class="text-danger"></span></div>
+
+<div class="form-outline mb-4">
+
+                    <label asp-for="@Model.Dto.StartTime">Start Time
+                    </label>
+                    <select asp-for="@Model.Dto.StartTime" asp-items="@(new SelectList(Model.Start))" class="form-control"></select>
+                    <span asp-validation-for="@Model.Dto.StartTime" class="text-danger"></span></div>
+
+<div class="form-outline mb-4">
+                    <label asp-for="@Model.Dto.EndTime">End Time
+                    </label>
+                    <select asp-for="@Model.Dto.EndTime" asp-items="@(new SelectList(Model.End))" class="form-control"></select>
+                    <span asp-validation-for="@Model.Dto.EndTime" class="text-danger"></span></div>
+
+
+<div class="form-outline mb-4">
+
+                    <label asp-for="@Model.Dto.Capacity">Capacity
+                    </label>
+                    <input asp-for="@Model.Dto.Capacity" class="form-control">
+                    <span asp-validation-for="@Model.Dto.Capacity" class="text-danger"></span></div>
+                
+            <button type="submit" class="btn btn-primary text-center">Add</button><br>
+        </form></div>

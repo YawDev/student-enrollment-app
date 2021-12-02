@@ -1,0 +1,39 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using StudentEnrollment.Entities
+@inject SignInManager<RequestUser> SignInManager
+@inject UserManager<RequestUser> UserManager
+@{
+    var Permissions = UserManager.GetUserAsync(User).Result?.Permission;
+}
+<ul class="navbar-nav">
+@if (SignInManager.IsSignedIn(User))
+{
+
+    <li class="nav-item">
+        @if(Permissions == StudentEnrollment.Store.Enums.Permissions.StudentPermissions)
+        {
+            <a  class="nav-link text-light" asp-controller="Accounts" asp-action="Account">Student Portal</a>
+        }
+        @if(Permissions == StudentEnrollment.Store.Enums.Permissions.InstructorPermissions)
+        {
+             <a  class="nav-link text-light" asp-controller="Accounts" asp-action="Account">Instructor Portal</a>
+        }
+        @if(Permissions == StudentEnrollment.Store.Enums.Permissions.AdminPermissions)
+        {
+             <a  class="nav-link text-light" asp-controller="Accounts" asp-action="Account">Admin Portal</a>
+        }
+    </li>
+    <li class="nav-item">
+         <a class="nav-link text-light" asp-controller="Accounts" asp-action="Logout">Sign Out</a>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-light" asp-controller="Accounts" asp-action="Register">Sign Up</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-light" asp-controller="Accounts" asp-action="Login">Login</a>
+    </li>
+}
+</ul>

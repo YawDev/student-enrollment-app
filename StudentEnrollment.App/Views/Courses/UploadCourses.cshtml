@@ -1,0 +1,39 @@
+@model UploadCoursesViewModel
+
+@{
+    ViewData["Title"] = "Upload Courses";
+    var message = ViewBag.Message;
+}
+
+@if(!string.IsNullOrEmpty(message))
+{
+    @if(message.Contains("successfully"))
+    {
+    <div class="alert alert-success">@ViewBag.Message
+    </div>
+    }
+    else
+    {
+         <div class="alert alert-danger">@ViewBag.Message</div>
+    }
+   
+}
+
+
+<form enctype="multipart/form-data" method="post">
+    <dl>
+        <dt>
+            <label asp-for="@Model.FormFile">Upload Courses from CSV</label>
+        </dt>
+        <dd>
+            <input asp-for="@Model.FormFile" type="file">
+            <span asp-validation-for="@Model.FormFile"></span>
+        </dd>
+    </dl>
+    <input asp-page-handler="Upload" class="btn btn-info text-center" type="submit" value="Upload" />
+    <a class="btn"
+                        asp-controller="Departments"
+
+                        asp-action="Index">Back</a><br>
+</form>
+

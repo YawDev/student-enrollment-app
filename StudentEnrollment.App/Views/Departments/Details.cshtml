@@ -1,0 +1,38 @@
+@model DepartmentDetailsDto
+@using StudentEnrollment.Core.Dtos;
+
+
+@{
+    ViewData["Title"] = "Departments";
+}
+
+<div class="text-center">
+    <h1 class="display-4">@Model.Title</h1>
+</div>
+
+<P
+<br> </br>
+<h6>Instructors</h6>
+<table class="table">  <thead class="thead-light">
+
+    <tr>
+         <th>Title</th>
+      <th >First</th>
+      <th >Last</th>
+     
+    </tr></thead>
+  <tbody>
+  
+        @foreach (var item in Model.Instructors)
+        {
+              <tr>
+                  <td>@item.Title</td>
+                  <td>@item.FirstName</td>
+                  <td> @item.LastName</td>
+                 
+                </tr>
+
+        }
+  </tbody>
+</table>
+
