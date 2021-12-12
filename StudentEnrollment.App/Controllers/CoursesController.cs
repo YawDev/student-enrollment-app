@@ -213,7 +213,7 @@ namespace StudentEnrollment.App.Controllers
         {
             return new AddCourseViewModel()
             {
-                Dto = new AddCourseDto(){ Department=departmentDto.Title },
+                Dto = new SaveCourseDto(){ Department=departmentDto.Title },
                 InstructorsListItems = departmentDto.Instructors,
                 Start = _TimeSelector.StartTime,
                 End = _TimeSelector.EndTime

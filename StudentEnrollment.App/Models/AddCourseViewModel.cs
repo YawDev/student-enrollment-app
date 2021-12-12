@@ -8,7 +8,7 @@ namespace StudentEnrollment.App.Models
    
     public class AddCourseViewModel
     {
-        public AddCourseDto Dto { get; set; }
+        public SaveCourseDto Dto { get; set; }
 
         public List<InstructorDto> InstructorsListItems { get; set; }
 
