@@ -1,3 +1,4 @@
+using System.Net;
 using System.IO;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ using static StudentEnrollment.App.Models.TimeSelectField;
 using StudentEnrollment.Core.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using StudentEnrollment.Entities;
+using StudentEnrollment.Core.Services;
 
 namespace StudentEnrollment.App.Controllers
 {
@@ -25,22 +27,23 @@ namespace StudentEnrollment.App.Controllers
         private readonly ILogger<CoursesController> _logger;
         private readonly IApiService _apiService;
         private readonly IUploadService _uploadService;
+
         private readonly ApiToView _ApiToView;
         private readonly TimeSelectField _TimeSelector;
         private readonly UserManager<RequestUser> _userManager;
         private readonly SignInManager<RequestUser> _signInManager;
 
         public CoursesController(ILogger<CoursesController> logger, IApiService ApiService,
-        IUploadService uploadService,UserManager<RequestUser> userManager, 
-        SignInManager<RequestUser> signInManager)
+       UserManager<RequestUser> userManager, 
+        SignInManager<RequestUser> signInManager,IUploadService uploadService)
         {
             _logger = logger;
             _apiService = ApiService;
             _ApiToView = new ApiToView();
             _TimeSelector = new TimeSelectField();
-            _uploadService = uploadService;
             _userManager = userManager;
             _signInManager = signInManager;
+            _uploadService = uploadService;
         }
 
         public IActionResult UploadCourses()
@@ -58,17 +61,25 @@ namespace StudentEnrollment.App.Controllers
             {
                 var userid = _userManager.GetUserId(User);
                 var formfile  = uploadCoursesViewModel.FormFile;
+                
            
                 if(uploadCoursesViewModel.FormFile?.Length > 0)
                 {
                     _uploadService.ValidateFile(formfile);
                     _uploadService.SaveFile();
-                    var Courses = _uploadService.GetMappedDtos();
+                    var courseDtos =  _uploadService.GetMappedDtos();
 
-                    _apiService.PostObjectResponse($"api/upload/courses/{userid}", Courses);
-                    ViewBag.Message = "File successfully uploaded. Check status of upload";
+                    var response = _apiService.PostObjectResponse($"api/upload/courses/{userid}", courseDtos);
+
+                    if(response.StatusCode != HttpStatusCode.OK)
+                        ViewBag.Message = "Something went wrong when trying to upload file.";
+                    else
+                        ViewBag.Message = "File successfully uploaded. Check status of upload.";                  
+                    
                     return View(uploadCoursesViewModel);
                 }
+                ViewBag.Message = "File is missing.";
+                return View(uploadCoursesViewModel);
             }
             catch(DomainException ex)
             {
@@ -80,9 +91,8 @@ namespace StudentEnrollment.App.Controllers
             {
                 ViewBag.Message = "Upload failed, not able to map file content.";
                 _logger.LogError(ex.Message);
-                return View();
+                return View(uploadCoursesViewModel);
             }
-            return View(uploadCoursesViewModel);
         }
 
         [HttpGet]

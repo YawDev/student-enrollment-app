@@ -23,19 +23,16 @@ namespace StudentEnrollment.App.Services
             _userManager = userManager;
         }
 
-  
 
         public void Login(LoginDto loginDto)
         {
             var user =  _userManager.FindByNameAsync(loginDto.UserName).Result;
             var result = _userManager.CheckPasswordAsync(user, loginDto.Password).Result;
-            //SignUserIn( user);
 
             if (!result)
                 throw new DomainException("Invalid Login");
         }
 
-        
         public void ResetPassword()
         {
             throw new System.NotImplementedException();

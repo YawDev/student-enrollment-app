@@ -17,7 +17,7 @@ using StudentEnrollment.Entities;
 using StudentEnrollment.Services;
 using StudentEnrollment.App.Services;
 using Microsoft.AspNetCore.Http;
-
+using StudentEnrollment.Core.Services;
 
 namespace StudentEnrollment.App
 {
@@ -43,7 +43,6 @@ namespace StudentEnrollment.App
 
             services.AddScoped<IUserService, UserService>();
             HttpClientServices(services);
-            services.AddScoped<IUploadService, UploadService>();
 
 
             services.AddControllersWithViews();
@@ -86,6 +85,8 @@ namespace StudentEnrollment.App
         public void HttpClientServices(IServiceCollection services)
         {
             services.AddScoped<IApiService, ApiService>();
+            services.AddScoped<IUploadService, UploadService>();
+
             services.AddScoped<IHttpClientService, HttpClientService>();
             services.AddHttpClient<IHttpClientService, HttpClientService>(options =>
             {
