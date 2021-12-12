@@ -71,7 +71,7 @@ namespace StudentEnrollment.App.Controllers
 
                     var response = _apiService.PostObjectResponse($"api/upload/courses/{userid}", courseDtos);
 
-                    if(response.StatusCode != HttpStatusCode.OK)
+                    if(response.StatusCode != HttpStatusCode.Created)
                         ViewBag.Message = "Something went wrong when trying to upload file.";
                     else
                         ViewBag.Message = "File successfully uploaded. Check status of upload.";                  
