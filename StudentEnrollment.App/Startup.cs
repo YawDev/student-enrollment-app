@@ -77,7 +77,7 @@ namespace StudentEnrollment.App
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Departments}/{action=Index}");
                 endpoints.MapRazorPages();
             });
         }

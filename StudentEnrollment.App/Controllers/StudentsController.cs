@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -42,8 +43,21 @@ namespace StudentEnrollment.App.Controllers
             var ApiUrl = "api/students/register";
             var response =  _apiService.PostObjectResponse(ApiUrl, addStudentDto);
 
-            if(response.IsSuccessStatusCode)
-                return RedirectToAction("Index","Home");
+           if(response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                ViewBag.Message = "Something went wrong while creating account."; return View(addStudentDto); 
+            }
+
+            if(response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                var message = _apiService.GetApiResultMessage(response);
+                ViewBag.Message = message; return View(addStudentDto); 
+            } 
+
+            if(response.StatusCode == HttpStatusCode.Created)
+            {
+                ViewBag.Message = "Sign up has been successful"; return View(addStudentDto); 
+            }   
             
             return View(addStudentDto);
         }

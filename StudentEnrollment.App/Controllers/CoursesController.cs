@@ -59,7 +59,7 @@ namespace StudentEnrollment.App.Controllers
         {
             try
             {
-                var userid = _userManager.GetUserId(User);
+                var userid = _userManager.GetUserId(User); 
                 var formfile  = uploadCoursesViewModel.FormFile;
                 
            

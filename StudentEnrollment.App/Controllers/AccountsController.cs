@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -72,6 +73,13 @@ namespace StudentEnrollment.App.Controllers
                 try
                 {
                     var response =  _apiService.PostObjectResponse("api/login", loginDto);
+                   
+                    if(response.StatusCode == HttpStatusCode.InternalServerError) 
+                        throw new Exception(response.ReasonPhrase);
+
+                    if(response.StatusCode == HttpStatusCode.BadRequest) 
+                        throw new DomainException(ErrorMessages.InvalidLogin);
+
                     if(response.IsSuccessStatusCode)
                     {
                         response =  _apiService.GetResponse($"api/users/{loginDto.UserName}");
@@ -79,7 +87,7 @@ namespace StudentEnrollment.App.Controllers
                         {
                             var user =  _apiService.GetDeserializedObject<RequestUser>(response);
                             SignUserIn(user);
-                            return RedirectToAction("Index", "Home");
+                            return RedirectToAction("Index", "Departments");
                         }
                     }
                     return View(loginDto);
@@ -88,7 +96,8 @@ namespace StudentEnrollment.App.Controllers
                 catch (DomainException ex)
                 {
                     _logger.LogError(ex.Message);
-                    ModelState.AddModelError("Error", ex.Message);
+                    ModelState.AddModelError("Error", ex.Message); ViewBag.Message = ex.Message;
+                    return View(loginDto);
                 }
                 catch (Exception ex)
                 {

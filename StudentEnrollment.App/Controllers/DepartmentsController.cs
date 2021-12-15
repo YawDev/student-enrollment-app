@@ -88,6 +88,7 @@ namespace StudentEnrollment.App.Controllers
 
                     if(response.IsSuccessStatusCode)
                        return RedirectToAction("Index");
+                    
                     ViewBag.Message = _apiService.GetApiResultMessage(response);
                     
                     return View(departmentDto);
