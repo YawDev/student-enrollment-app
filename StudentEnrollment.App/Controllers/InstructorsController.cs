@@ -10,8 +10,10 @@ using Newtonsoft.Json.Linq;
 using StudentEnrollment.App.Models;
 using StudentEnrollment.App.Services;
 using StudentEnrollment.Core.Dtos;
+using StudentEnrollment.Core.Services;
 using StudentEnrollment.Entities;
 using StudentEnrollment.Services;
+using StudentEnrollment.Store.Enums;
 
 namespace StudentEnrollment.App.Controllers
 {
@@ -19,19 +21,15 @@ namespace StudentEnrollment.App.Controllers
     {
         private readonly ILogger<InstructorsController> _logger;
         private readonly IApiService _apiService;
-        private readonly UserManager<RequestUser> _userManager;
-        private readonly SignInManager<RequestUser> _signInManager;
+        private readonly IUserAuthService _userAuthService;
         GradeSelectField gradeSelectField;    
 
-
-
-        public InstructorsController(ILogger<InstructorsController> logger, IApiService apiService,
-        UserManager<RequestUser> userManager, SignInManager<RequestUser> signInManager)
+        public InstructorsController(ILogger<InstructorsController> logger, IApiService apiService, 
+        IUserAuthService userAuthService)
         {
             _logger = logger;
             _apiService = apiService;
-            _signInManager = signInManager;
-            _userManager=userManager;
+            _userAuthService = userAuthService;
             gradeSelectField = new GradeSelectField();
         }
         [HttpGet]
@@ -67,10 +65,10 @@ namespace StudentEnrollment.App.Controllers
 
         public IActionResult Details(string Id)
         {
-            if(_signInManager.IsSignedIn(User))
+            if(_userAuthService.IsSignedIn(User))
             {
-                var currentUserId = _userManager.GetUserAsync(User).Result.Id;
-                if(currentUserId != Id || !Authorize())
+                var currentUserId = _userAuthService.GetUserid(User);
+                if(currentUserId != Id || !_userAuthService.HasProperPermission(User, Permissions.InstructorPermissions))
                         return RedirectToAction("NotAuthorized","Accounts");
 
                 var response =  _apiService.GetResponse($"api/instructor-account/{Id}");
@@ -100,9 +98,10 @@ namespace StudentEnrollment.App.Controllers
         [HttpGet]
         public IActionResult SubmitGrade(Guid Id)
         {
-            if(_signInManager.IsSignedIn(User))
+            if(_userAuthService.IsSignedIn(User))
             {
-                if(!Authorize()) return RedirectToAction("NotAuthorized","Accounts");
+                if(!_userAuthService.HasProperPermission(User, Permissions.InstructorPermissions)) 
+                    return RedirectToAction("NotAuthorized","Accounts");
                 
                 var response =  _apiService.GetResponse($"api/enrollment/{Id}");
                 if(response.IsSuccessStatusCode)
@@ -147,16 +146,7 @@ namespace StudentEnrollment.App.Controllers
             return submitGradeViewModel;
         }
 
-        public bool Authorize()
-        {
-                var Permissions = _userManager.GetUserAsync(User).Result.Permission;
-                if(Permissions != Store.Enums.Permissions.InstructorPermissions)
-                    return false;
-
-
-                return true;
-        }
-
+     
         
 
      

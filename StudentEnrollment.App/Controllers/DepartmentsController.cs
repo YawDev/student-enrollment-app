@@ -12,8 +12,10 @@ using Newtonsoft.Json.Linq;
 using StudentEnrollment.App.Models;
 using StudentEnrollment.App.Services;
 using StudentEnrollment.Core.Dtos;
+using StudentEnrollment.Core.Services;
 using StudentEnrollment.Entities;
 using StudentEnrollment.Services;
+using StudentEnrollment.Store.Enums;
 
 namespace StudentEnrollment.App.Controllers
 {
@@ -21,17 +23,14 @@ namespace StudentEnrollment.App.Controllers
     {
         private readonly ILogger<DepartmentsController> _logger;
         private readonly IApiService _apiService;
-        private readonly SignInManager<RequestUser> _signInManager;
-        private readonly UserManager<RequestUser> _userManager;
-
+       private readonly IUserAuthService _userAuthService;
        
         public DepartmentsController(ILogger<DepartmentsController> logger, IApiService apiService,
-        SignInManager<RequestUser> signInManager, UserManager<RequestUser> userManager)
+        IUserAuthService userAuthService)
         {
             _logger = logger;
             _apiService = apiService;
-            _signInManager = signInManager;
-            _userManager = userManager;
+            _userAuthService = userAuthService;
         }
 
         [HttpGet]
@@ -39,8 +38,7 @@ namespace StudentEnrollment.App.Controllers
         {
             try
             {
-                var currentUser = _signInManager.IsSignedIn(User);
-                if(currentUser)
+                if(_userAuthService.IsSignedIn(User))
                 {
                     var response =  _apiService.GetResponse("api/departments");
                     if(response.IsSuccessStatusCode)
@@ -65,11 +63,9 @@ namespace StudentEnrollment.App.Controllers
 
         public IActionResult Add()
         {
-            var currentUser = _signInManager.IsSignedIn(User);
-            if(currentUser)
+            if(_userAuthService.IsSignedIn(User))
             {
-               var isAuthorized = Authorize();
-               if(!isAuthorized)
+                if(!_userAuthService.HasProperPermission(User, Permissions.AdminPermissions))
                     return RedirectToAction("NotAuthorized", "Accounts");
 
                 return View();
@@ -106,9 +102,9 @@ namespace StudentEnrollment.App.Controllers
         {
             try
             {
-                if(_signInManager.IsSignedIn(User))
+                if(_userAuthService.IsSignedIn(User))
                 {
-                    if(!Authorize()) 
+                    if(!_userAuthService.HasProperPermission(User, Permissions.AdminPermissions)) 
                         return RedirectToAction("NotAuthorized", "Accounts");
 
                         var response =  _apiService.GetResponse($"api/departments/details/{id}");
@@ -154,7 +150,7 @@ namespace StudentEnrollment.App.Controllers
         {
             try
                 {
-                    if(_signInManager.IsSignedIn(User))
+                    if(_userAuthService.IsSignedIn(User))
                     {
                         var response =  _apiService.GetResponse($"api/departments/details/{id}");
 
@@ -172,17 +168,6 @@ namespace StudentEnrollment.App.Controllers
                     _logger.LogError(ex.Message);
                     return RedirectToAction("ServerError","Home");
                 }
-        }
-
-       
-
-        public bool Authorize()
-        {
-                var Permissions = _userManager.GetUserAsync(User).Result.Permission;
-                if(Permissions != Store.Enums.Permissions.AdminPermissions)
-                    return false;
-
-                return true;
         }
     }
 }

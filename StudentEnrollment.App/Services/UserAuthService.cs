@@ -49,19 +49,18 @@ namespace StudentEnrollment.App.Services
                 var studentDetails = _apiService.GetDeserializedObject<StudentDetailsDto>(response);
                 if(studentDetails.Id != idParameter)
                     return false;
+                
+                return true;
             }
-            return true;
+            return false;
         }
 
 
         public bool HasProperPermission(ClaimsPrincipal user, Permissions Type)
         {
             var Permissions = _userManager.GetUserAsync(user).Result.Permission;
-            if(Permissions != Type)
-                return false;
 
-
-            return true;
+            return Permissions == Type;
         }
 
         public bool IsSignedIn(ClaimsPrincipal user)
@@ -88,5 +87,12 @@ namespace StudentEnrollment.App.Services
             identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
             await httpContext.SignInAsync(IdentityConstants.ApplicationScheme, new ClaimsPrincipal(identity));
         }
+
+        public bool VerifyCurrentUser(string userIdParameter, ClaimsPrincipal user)
+        {
+           var signedInUserId = GetUserid(user);
+           return signedInUserId == userIdParameter;
+        }
+
     }
 }
