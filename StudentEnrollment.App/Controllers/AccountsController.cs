@@ -16,26 +16,28 @@ using StudentEnrollment.App.Models;
 using StudentEnrollment.App.Services;
 using StudentEnrollment.Core.Dtos;
 using StudentEnrollment.Core.Exceptions;
+using StudentEnrollment.Core.Services;
 using StudentEnrollment.Entities;
 using StudentEnrollment.Services;
+using StudentEnrollment.Store.Enums;
 
 namespace StudentEnrollment.App.Controllers
 {
     public class AccountsController : BaseController
     {
 
-        private readonly UserManager<RequestUser> _userManager;
-        private readonly SignInManager<RequestUser> _signInManager;    
         private readonly ILogger<AccountsController> _logger;
-        private readonly IApiService _apiService;       
+        private readonly IApiService _apiService;  
+        private readonly IUserAuthService _userAuthService;    
+     
 
-        public AccountsController(UserManager<RequestUser> userManager, SignInManager<RequestUser> signInManager, ILogger<AccountsController> logger,
+        public AccountsController(IUserAuthService userAuthService, ILogger<AccountsController> logger,
         IApiService ApiService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+           
             _logger = logger;
             _apiService = ApiService;
+            _userAuthService = userAuthService;
         }
 
         public IActionResult NotAuthorized()
@@ -43,22 +45,19 @@ namespace StudentEnrollment.App.Controllers
             return View();
         }
 
-         public IActionResult Register()
+        public IActionResult Register()
         {
-            var currentUser = _signInManager.IsSignedIn(User);
-
-            if (!currentUser)
+            if (!_userAuthService.IsSignedIn(User))
                 return View();
 
             return RedirectToAction("Index", "Home");
         }
 
-         public IActionResult Login()
+        public IActionResult Login()
         {
-            var currentUser = _signInManager.IsSignedIn(User);
-            
-            if (!currentUser)
+             if (!_userAuthService.IsSignedIn(User))
                 return View();
+
 
             
             return RedirectToAction("Index", "Home");
@@ -66,7 +65,7 @@ namespace StudentEnrollment.App.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(LoginDto loginDto)
+        public async Task<IActionResult> LoginAsync(LoginDto loginDto)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +85,7 @@ namespace StudentEnrollment.App.Controllers
                         if(response.IsSuccessStatusCode)
                         {
                             var user =  _apiService.GetDeserializedObject<RequestUser>(response);
-                            SignUserIn(user);
+                            await Task.Run(() => _userAuthService.SignInAsync(HttpContext, user));
                             return RedirectToAction("Index", "Departments");
                         }
                     }
@@ -113,7 +112,7 @@ namespace StudentEnrollment.App.Controllers
         {
             try
             {
-                _signInManager.SignOutAsync();
+                _userAuthService.SignOut();
                 return RedirectToAction("Login", "Accounts");
             }
             catch (Exception ex)
@@ -122,22 +121,16 @@ namespace StudentEnrollment.App.Controllers
                     return RedirectToAction("ServerError","Home");
             }
         }
-        protected async void SignUserIn(RequestUser user)
-        {
-            var identity = new ClaimsIdentity(IdentityConstants.ApplicationScheme);
-            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
-            identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
-            await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, new ClaimsPrincipal(identity));
-        }
+        
 
         
         public IActionResult Account()
         {
             try
             {
-                if (_signInManager.IsSignedIn(User))
+                if (_userAuthService.IsSignedIn(User))
                 {
-                    var id = _userManager.GetUserId(User);
+                    var id = _userAuthService.GetUserid(User);
                     var response  =  _apiService.GetResponse($"api/student-account/{id}");
 
                     if(response.IsSuccessStatusCode)
@@ -159,9 +152,9 @@ namespace StudentEnrollment.App.Controllers
         {
             try
             {
-                if (_signInManager.IsSignedIn(User))
+                if (_userAuthService.IsSignedIn(User))
                 {
-                        if(!AuthorizeStudent(Id))
+                    if(!_userAuthService.AuthorizeUser("api/student-account", Permissions.StudentPermissions, Id, User))
                             return RedirectToAction("NotAuthorized", "Accounts");
 
                         return RedirectToAction("Transcript", new { id = Id });
@@ -177,9 +170,9 @@ namespace StudentEnrollment.App.Controllers
 
         public IActionResult Transcript(Guid Id)
         {
-            if(_signInManager.IsSignedIn(User))
+            if(_userAuthService.IsSignedIn(User))
             {
-                if(!AuthorizeStudent(Id))
+                if(!_userAuthService.AuthorizeUser("api/student-account", Permissions.StudentPermissions, Id, User))
                     return RedirectToAction("NotAuthorized", "Accounts");
 
                 var response  =   _apiService.GetResponse($"api/my-enrollments/{Id}");
@@ -197,9 +190,9 @@ namespace StudentEnrollment.App.Controllers
         [HttpGet]
         public IActionResult Enroll(Guid Id)
         {
-            if (_signInManager.IsSignedIn(User))
+            if (_userAuthService.IsSignedIn(User))
             {
-                if(!AuthorizeStudent(Id))
+                if(!_userAuthService.AuthorizeUser("api/student-account", Permissions.StudentPermissions, Id, User))
                     return RedirectToAction("NotAuthorized", "Accounts");
 
                 return View(new EnrollViewModel{Id = Id, Dto = new EnrollCourseDto()});
@@ -215,10 +208,10 @@ namespace StudentEnrollment.App.Controllers
             {
                 try
                 {
-                    if (_signInManager.IsSignedIn(User))
+                    if (_userAuthService.IsSignedIn(User))
                     {
                         var id = viewModel.Id;
-                        if(!AuthorizeStudent(id)) 
+                        if(!_userAuthService.AuthorizeUser("api/student-account", Permissions.StudentPermissions, id, User))
                             return RedirectToAction("NotAuthorized", "Accounts");
 
                         var response  =  _apiService.PostObjectResponse($"api/courses-enroll/{id}", viewModel.Dto);
@@ -240,26 +233,5 @@ namespace StudentEnrollment.App.Controllers
         }
         return View(viewModel);
         }
-
-        public bool AuthorizeStudent(Guid urlParameter)
-        {
-            var currentUser = _userManager.GetUserAsync(User);
-            if(currentUser.Result.Permission != Store.Enums.Permissions.StudentPermissions)
-                return false;
-
-            var response =  _apiService.GetResponse($"api/student-account/{currentUser.Result.Id}");
-            if(response.IsSuccessStatusCode)
-            {
-                var currentUserStudentDetails = _apiService.GetDeserializedObject<StudentDetailsDto>(response);
-                if(currentUserStudentDetails.Id != urlParameter)
-                    return false;
-            }
-            return true;
-        }
-
-        
-
-        
-
     }
 }
