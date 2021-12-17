@@ -138,7 +138,12 @@ namespace StudentEnrollment.App.Controllers
                         var detailsDto = _apiService.GetDeserializedObject<StudentDetailsDto>(response);
                         return RedirectToAction("Details","Students", detailsDto);
                     }
-                    return RedirectToAction("Details","Instructors", new {id = id});
+
+                    if(_userAuthService.HasProperPermission(User, Permissions.InstructorPermissions))
+                            return RedirectToAction("Details","Instructors", new {id = id});
+                    
+                     if(_userAuthService.HasProperPermission(User, Permissions.AdminPermissions))
+                            return RedirectToAction("UnderConstruction","Home", new {id = id});
                 }
                 return RedirectToAction("Index", "Home");}
             catch (Exception ex)

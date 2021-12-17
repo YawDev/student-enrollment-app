@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using StudentEnrollment.App.Services;
 using StudentEnrollment.Core.Dtos;
+using StudentEnrollment.Core.Services;
 using StudentEnrollment.Entities;
 
 namespace StudentEnrollment.App.Controllers
@@ -12,19 +13,23 @@ namespace StudentEnrollment.App.Controllers
     {
       
         private readonly ILogger<AccountsController> _logger;
-        private readonly IApiService _apiService;       
+        private readonly IApiService _apiService;     
+        private readonly IUserAuthService _userAuthService;       
+  
 
-        public AdminController(ILogger<AccountsController> logger,IApiService ApiService)
+        public AdminController(ILogger<AccountsController> logger,IApiService ApiService,IUserAuthService userAuthService)
         {
           
             _logger = logger;
             _apiService = ApiService;
+            _userAuthService = userAuthService;
         }
 
         [HttpGet]
         public IActionResult Register()
         {
-            
+             if(_userAuthService.IsSignedIn(User))
+                return RedirectToAction("Index", "Departments");
             return View();
         }
 
