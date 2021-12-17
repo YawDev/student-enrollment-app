@@ -31,6 +31,9 @@ namespace StudentEnrollment.App.Controllers
         [HttpGet]
         public IActionResult Register()
         {
+            if(_userAuthService.IsSignedIn(User))
+                return RedirectToAction("Index", "Departments");
+
             return View();
         }
 
