@@ -13,20 +13,25 @@
 }
 </style>
 
+@if(!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <div class="alert alert-danger">@ViewBag.Message</div>
+}
+
 <form asp-action="Login" method="post" role="form">
 
 
-           <h3> Login</h3><br>
+           <h4 style="color: white;">Portal Login</h4><br>
 
                 <div class="form-group">
                     
-                    <label asp-for="UserName">Username</label>
+                    <label asp-for="UserName">Username </label>
                     <input asp-for="UserName" class="form-control"/>
                     <span asp-validation-for="UserName" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="Password"></label>
+                    <label asp-for="Password">Password </label>
                     <input asp-for="Password" class="form-control"/>
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div><br>

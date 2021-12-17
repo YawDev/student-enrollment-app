@@ -4,8 +4,15 @@
 @{
     ViewData["Title"] = "Sign Up - Instructor";
 }
-           <h3>Instructor Sign Up</h3><br>
-
+           <h3  style="color: white;">Instructor Sign Up</h3><br>
+@if(!string.IsNullOrEmpty(ViewBag.Message) && !ViewBag.Message.Contains("successful"))
+{
+    <div class="alert alert-danger">@ViewBag.Message</div>
+}
+@if(!string.IsNullOrEmpty(ViewBag.Message) && ViewBag.Message.Contains("successful"))
+{
+    <div class="alert alert-success">@ViewBag.Message</div>
+}
 <form method="post">
 
 

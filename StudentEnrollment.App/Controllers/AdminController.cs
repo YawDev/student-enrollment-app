@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -32,8 +33,21 @@ namespace StudentEnrollment.App.Controllers
         {
             var response =  _apiService.PostObjectResponse("api/admin/register", addAdminDto);
 
-            if(response.IsSuccessStatusCode)
-                return RedirectToAction("Index","Home");
+            if(response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                ViewBag.Message = "Something went wrong while creating account."; return View(addAdminDto); 
+            }
+
+            if(response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                 var message = _apiService.GetApiResultMessage(response);
+                ViewBag.Message = message; return View(addAdminDto); 
+            } 
+
+            if(response.StatusCode == HttpStatusCode.Created)
+            {
+                ViewBag.Message = "Sign up has been successful"; return View(addAdminDto); 
+            }        
             
             return View(addAdminDto);
         }

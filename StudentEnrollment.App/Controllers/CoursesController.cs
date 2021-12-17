@@ -27,7 +27,6 @@ namespace StudentEnrollment.App.Controllers
         private readonly ILogger<CoursesController> _logger;
         private readonly IApiService _apiService;
         private readonly IUploadService _uploadService;
-
         private readonly ApiToView _ApiToView;
         private readonly TimeSelectField _TimeSelector;
         private readonly UserManager<RequestUser> _userManager;
@@ -59,7 +58,7 @@ namespace StudentEnrollment.App.Controllers
         {
             try
             {
-                var userid = _userManager.GetUserId(User);
+                var userid = _userManager.GetUserId(User); 
                 var formfile  = uploadCoursesViewModel.FormFile;
                 
            
@@ -71,7 +70,7 @@ namespace StudentEnrollment.App.Controllers
 
                     var response = _apiService.PostObjectResponse($"api/upload/courses/{userid}", courseDtos);
 
-                    if(response.StatusCode != HttpStatusCode.OK)
+                    if(response.StatusCode != HttpStatusCode.Created)
                         ViewBag.Message = "Something went wrong when trying to upload file.";
                     else
                         ViewBag.Message = "File successfully uploaded. Check status of upload.";                  
@@ -89,7 +88,7 @@ namespace StudentEnrollment.App.Controllers
             }
             catch(Exception ex)
             {
-                ViewBag.Message = "Upload failed, not able to map file content.";
+                ViewBag.Message = "Unable Able to Upload File.";
                 _logger.LogError(ex.Message);
                 return View(uploadCoursesViewModel);
             }

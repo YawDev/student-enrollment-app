@@ -18,6 +18,7 @@ using StudentEnrollment.Services;
 using StudentEnrollment.App.Services;
 using Microsoft.AspNetCore.Http;
 using StudentEnrollment.Core.Services;
+using System.Net;
 
 namespace StudentEnrollment.App
 {
@@ -41,7 +42,8 @@ namespace StudentEnrollment.App
             .AddDefaultTokenProviders();
            
 
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserAuthService, UserAuthService>();
+
             HttpClientServices(services);
 
 
@@ -77,7 +79,7 @@ namespace StudentEnrollment.App
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Departments}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
         }

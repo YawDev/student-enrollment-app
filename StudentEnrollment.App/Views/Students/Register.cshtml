@@ -6,7 +6,14 @@
 }
            <h3>Student Registration</h3><br>
 
-
+@if(!string.IsNullOrEmpty(ViewBag.Message) && !ViewBag.Message.Contains("successful"))
+{
+    <div class="alert alert-danger">@ViewBag.Message</div>
+}
+@if(!string.IsNullOrEmpty(ViewBag.Message) && ViewBag.Message.Contains("successful"))
+{
+    <div class="alert alert-success">@ViewBag.Message</div>
+}
 
 <form method="post">
 

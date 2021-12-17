@@ -4,8 +4,16 @@
 @{
     ViewData["Title"] = "Sign Up - Admin";
 }
-           <h3>Admin Portal</h3><br>
+           <h3  style="color: white;">Admin Portal</h3><br>
 
+@if(!string.IsNullOrEmpty(ViewBag.Message) && !ViewBag.Message.Contains("successful"))
+{
+    <div class="alert alert-danger">@ViewBag.Message</div>
+}
+@if(!string.IsNullOrEmpty(ViewBag.Message) && ViewBag.Message.Contains("successful"))
+{
+    <div class="alert alert-success">@ViewBag.Message</div>
+}
 <form method="post">
 
 

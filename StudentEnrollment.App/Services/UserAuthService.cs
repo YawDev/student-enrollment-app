@@ -1,0 +1,92 @@
+using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using StudentEnrollment.Core.Dtos;
+using StudentEnrollment.Core.Services;
+using StudentEnrollment.Entities;
+using StudentEnrollment.Store.Enums;
+
+namespace StudentEnrollment.App.Services
+{
+    public class UserAuthService : IUserAuthService
+    {
+        private readonly UserManager<RequestUser> _userManager;
+        private readonly SignInManager<RequestUser> _signInManager;    
+        private readonly IApiService _apiService;       
+
+        public UserAuthService(UserManager<RequestUser> userManager,SignInManager<RequestUser> signInManager, IApiService apiService)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _apiService = apiService;
+        }
+
+        public bool AuthorizeUser(string url, Permissions Type, Guid urlParameter,ClaimsPrincipal user)
+        {
+            if(Type is Permissions.StudentPermissions)
+                return VerifyStudentAccess(url, urlParameter, user);
+
+            if(Type is Permissions.InstructorPermissions)
+                return true;
+            if(Type is Permissions.AdminPermissions)
+                return true;
+
+            return false;
+        }
+
+        private bool VerifyStudentAccess(string url, Guid idParameter, ClaimsPrincipal user)
+        {
+            var currentUser = _userManager.GetUserAsync(user);
+            var response =  _apiService.GetResponse($"{url}/{currentUser.Result.Id}");
+            if(response.IsSuccessStatusCode)
+            {
+                var studentDetails = _apiService.GetDeserializedObject<StudentDetailsDto>(response);
+                if(studentDetails.Id != idParameter)
+                    return false;
+            }
+            return true;
+        }
+
+
+        public bool HasProperPermission(ClaimsPrincipal user, Permissions Type)
+        {
+            var Permissions = _userManager.GetUserAsync(user).Result.Permission;
+            if(Permissions != Type)
+                return false;
+
+
+            return true;
+        }
+
+        public bool IsSignedIn(ClaimsPrincipal user)
+        {
+            return _signInManager.IsSignedIn(user);
+        }
+
+        
+
+        public void SignOut()
+        {
+            _signInManager.SignOutAsync();
+        }
+
+        public string GetUserid(ClaimsPrincipal user)
+        {
+            return _userManager.GetUserId(user);
+        }
+
+        public async Task SignInAsync(HttpContext httpContext, RequestUser user)
+        {
+            var identity = new ClaimsIdentity(IdentityConstants.ApplicationScheme);
+            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
+            identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
+            await httpContext.SignInAsync(IdentityConstants.ApplicationScheme, new ClaimsPrincipal(identity));
+        }
+    }
+}
