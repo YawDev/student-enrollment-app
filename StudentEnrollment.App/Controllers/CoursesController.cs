@@ -27,27 +27,23 @@ namespace StudentEnrollment.App.Controllers
         private readonly ILogger<CoursesController> _logger;
         private readonly IApiService _apiService;
         private readonly IUploadService _uploadService;
-        private readonly ApiToView _ApiToView;
         private readonly TimeSelectField _TimeSelector;
-        private readonly UserManager<RequestUser> _userManager;
-        private readonly SignInManager<RequestUser> _signInManager;
+        private readonly IUserAuthService _userAuthService;
+
 
         public CoursesController(ILogger<CoursesController> logger, IApiService ApiService,
-       UserManager<RequestUser> userManager, 
-        SignInManager<RequestUser> signInManager,IUploadService uploadService)
+       IUserAuthService userAuthService, IUploadService uploadService)
         {
             _logger = logger;
             _apiService = ApiService;
-            _ApiToView = new ApiToView();
             _TimeSelector = new TimeSelectField();
-            _userManager = userManager;
-            _signInManager = signInManager;
             _uploadService = uploadService;
+            _userAuthService = userAuthService;
         }
 
         public IActionResult UploadCourses()
         {
-            if(!_signInManager.IsSignedIn(User))
+            if(!_userAuthService.IsSignedIn(User))
                 return RedirectToAction("Login","Accounts");
 
             return View(new UploadCoursesViewModel());
@@ -58,7 +54,7 @@ namespace StudentEnrollment.App.Controllers
         {
             try
             {
-                var userid = _userManager.GetUserId(User); 
+                var userid = _userAuthService.GetUserid(User); 
                 var formfile  = uploadCoursesViewModel.FormFile;
                 
            
@@ -97,8 +93,8 @@ namespace StudentEnrollment.App.Controllers
         [HttpGet]
         public IActionResult UploadCourseLogs()
         {
-            var userid = _userManager.GetUserId(User);
-            if(_signInManager.IsSignedIn(User))
+            var userid = _userAuthService.GetUserid(User);
+            if(_userAuthService.IsSignedIn(User))
             {
                 var response = _apiService.GetResponse($"api/upload/logs/{userid}");
                 if(response.IsSuccessStatusCode)
@@ -113,8 +109,8 @@ namespace StudentEnrollment.App.Controllers
         [HttpGet]
         public IActionResult LogErrors(Guid id)
         {
-            var userid = _userManager.GetUserId(User);
-            if(_signInManager.IsSignedIn(User))
+            var userid = _userAuthService.GetUserid(User);
+            if(_userAuthService.IsSignedIn(User))
             {
                 var response = _apiService.GetResponse($"api/upload/logs/errors/{id}");
                 if(response.IsSuccessStatusCode)
