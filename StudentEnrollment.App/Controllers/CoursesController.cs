@@ -43,8 +43,8 @@ namespace StudentEnrollment.App.Controllers
 
         public IActionResult UploadCourses()
         {
-            if(!_userAuthService.IsSignedIn(User))
-                return RedirectToAction("Login","Accounts");
+            if (!_userAuthService.IsSignedIn(User))
+                return RedirectToAction("Login", "Accounts");
 
             return View(new UploadCoursesViewModel());
         }
@@ -54,35 +54,36 @@ namespace StudentEnrollment.App.Controllers
         {
             try
             {
-                var userid = _userAuthService.GetUserid(User); 
-                var formfile  = uploadCoursesViewModel.FormFile;
-                
-           
-                if(uploadCoursesViewModel.FormFile?.Length > 0)
+                var userid = _userAuthService.GetUserid(User);
+                var formfile = uploadCoursesViewModel.FormFile;
+
+
+                if (uploadCoursesViewModel.FormFile?.Length > 0)
                 {
                     _uploadService.ValidateFile(formfile);
                     _uploadService.SaveFile();
-                    var courseDtos =  _uploadService.GetMappedDtos();
+                    var path = _uploadService.GetFilePath();
+                    var courseDtos = _uploadService.GetMappedDtos();
 
-                    var response = _apiService.PostObjectResponse($"api/upload/courses/{userid}", courseDtos);
+                    var response = _apiService.PostObjectResponse($"api/upload/courses/{userid}/{path}", courseDtos);
 
-                    if(response.StatusCode != HttpStatusCode.Created)
+                    if (response.StatusCode != HttpStatusCode.Created)
                         ViewBag.Message = "Something went wrong when trying to upload file.";
                     else
-                        ViewBag.Message = "File successfully uploaded. Check status of upload.";                  
-                    
+                        ViewBag.Message = "File successfully uploaded. Check status of upload.";
+
                     return View(uploadCoursesViewModel);
                 }
                 ViewBag.Message = "File is missing.";
                 return View(uploadCoursesViewModel);
             }
-            catch(DomainException ex)
+            catch (DomainException ex)
             {
                 ViewBag.Message = ex.Message;
                 _logger.LogError(ex.Message);
                 return View();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ViewBag.Message = "Unable Able to Upload File.";
                 _logger.LogError(ex.Message);
@@ -94,53 +95,53 @@ namespace StudentEnrollment.App.Controllers
         public IActionResult UploadCourseLogs()
         {
             var userid = _userAuthService.GetUserid(User);
-            if(_userAuthService.IsSignedIn(User))
+            if (_userAuthService.IsSignedIn(User))
             {
                 var response = _apiService.GetResponse($"api/upload/logs/{userid}");
-                if(response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode)
                 {
                     var UploadLogs = _apiService.GetDeserializedObject<List<UploadCoursesLogDto>>(response);
-                    return View(new UploadStatusViewModel{uploads= UploadLogs});
+                    return View(new UploadStatusViewModel { uploads = UploadLogs });
                 }
-            }  
-            return RedirectToAction("Login","Accounts");
+            }
+            return RedirectToAction("Login", "Accounts");
         }
 
         [HttpGet]
         public IActionResult LogErrors(Guid id)
         {
             var userid = _userAuthService.GetUserid(User);
-            if(_userAuthService.IsSignedIn(User))
+            if (_userAuthService.IsSignedIn(User))
             {
                 var response = _apiService.GetResponse($"api/upload/logs/errors/{id}");
-                if(response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode)
                 {
                     var errors = _apiService.GetDeserializedObject<List<UploadCourseErrorDto>>(response);
-                    return View(new UploadErrorsViewModel{Errors= errors});
+                    return View(new UploadErrorsViewModel { Errors = errors });
                 }
-            }  
-            return RedirectToAction("Login","Accounts");
+            }
+            return RedirectToAction("Login", "Accounts");
         }
 
 
- 
+
 
         public IActionResult Delete(Guid id)
         {
             try
             {
                 var response = _apiService.GetResponse($"api/courses/{id}/details");
-                if(response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode)
                 {
                     var course = _apiService.GetDeserializedObject<CourseDto>(response);
                     return View(course);
                 }
-                return RedirectToAction("Notfound","Home");
+                return RedirectToAction("Notfound", "Home");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return RedirectToAction("ServerError","Home");
+                return RedirectToAction("ServerError", "Home");
             }
         }
 
@@ -153,29 +154,29 @@ namespace StudentEnrollment.App.Controllers
                 var id = courseDto.Id;
                 var response = _apiService.DeleteResponse($"api/courses/delete/{id}");
 
-                if(response.IsSuccessStatusCode)
-                    return RedirectToAction("Index","Departments");
-                
-                return RedirectToAction("Notfound","Home");
+                if (response.IsSuccessStatusCode)
+                    return RedirectToAction("Index", "Departments");
+
+                return RedirectToAction("Notfound", "Home");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                    return RedirectToAction("ServerError","Home");
+                return RedirectToAction("ServerError", "Home");
             }
         }
 
 
         public IActionResult Add(Guid Id)
         {
-                var response =  _apiService.GetResponse($"api/departments/details/{Id}");
-                if(response.IsSuccessStatusCode)
-                {   
-                    var Department = _apiService.GetDeserializedObject<DepartmentDto>(response);
-                    var ViewModel = CreateViewModel(Department);
-                    return View(ViewModel);
-                }
-                return RedirectToAction("Notfound","Home");
+            var response = _apiService.GetResponse($"api/departments/details/{Id}");
+            if (response.IsSuccessStatusCode)
+            {
+                var Department = _apiService.GetDeserializedObject<DepartmentDto>(response);
+                var ViewModel = CreateViewModel(Department);
+                return View(ViewModel);
+            }
+            return RedirectToAction("Notfound", "Home");
         }
 
 
@@ -186,18 +187,18 @@ namespace StudentEnrollment.App.Controllers
             {
                 try
                 {
-                    var response =  _apiService.PostObjectResponse("api/courses/add", ViewModel.Dto);
-                    
-                    if(response.IsSuccessStatusCode)
-                        return RedirectToAction("Index","Departments");
-                    
+                    var response = _apiService.PostObjectResponse("api/courses/add", ViewModel.Dto);
+
+                    if (response.IsSuccessStatusCode)
+                        return RedirectToAction("Index", "Departments");
+
                     ViewBag.Message = _apiService.GetApiResultMessage(response);
                     return View(ViewModel);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     _logger.LogError(ex.Message);
-                    return RedirectToAction("ServerError","Home");
+                    return RedirectToAction("ServerError", "Home");
                 }
             }
             return View(ViewModel);
@@ -208,13 +209,13 @@ namespace StudentEnrollment.App.Controllers
         {
             return new AddCourseViewModel()
             {
-                Dto = new SaveCourseDto(){ Department=departmentDto.Title },
+                Dto = new SaveCourseDto() { Department = departmentDto.Title },
                 InstructorsListItems = departmentDto.Instructors,
                 Start = _TimeSelector.StartTime,
                 End = _TimeSelector.EndTime
             };
         }
 
-  
+
     }
 }
