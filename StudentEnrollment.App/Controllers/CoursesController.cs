@@ -62,10 +62,11 @@ namespace StudentEnrollment.App.Controllers
                 {
                     _uploadService.ValidateFile(formfile);
                     _uploadService.SaveFile();
-                    var path = _uploadService.GetFilePath();
+                    var fileContent = _uploadService.GetFileContent();
                     var courseDtos = _uploadService.GetMappedDtos();
+                    var fileDto = new FileDto(){mappedData = courseDtos, Content = fileContent, fileName=formfile.FileName};
 
-                    var response = _apiService.PostObjectResponse($"api/upload/courses/{userid}/{path}", courseDtos);
+                    var response = _apiService.PostObjectResponse($"api/upload/courses/{userid}", fileDto);
 
                     if (response.StatusCode != HttpStatusCode.Created)
                         ViewBag.Message = "Something went wrong when trying to upload file.";
