@@ -79,6 +79,10 @@ asp-action="UploadCourseLogs"> Check Upload Status
     </tr></thead>
   <tbody>
   
+@if(Model.Departments.Count is 0)
+{
+  <p>No Departments available</p>
+}
         @foreach (var item in Model.Departments)
         {
               <tr>
@@ -115,65 +119,46 @@ asp-action="UploadCourseLogs"> Check Upload Status
   </tbody>
 </table><br>
 }
-
-
-@foreach (var item in Model.Departments)
+else
 {
-  <div class="text-center">
-    <div class="text-center">
-   
-    @if(item.Courses.Count != 0)
-    {
-       <h4 style="color: white;">Instructed Courses</h4>
-       
-          <table class="table table-bordered">
+
+    <table class="table table-bordered">
   <thead class="thead-light">
+
     <tr>
-      <th >Name</th>
-      <th >Title</th>
-      <th >Section</th>
-      <th >Instructor</th>
-      <th >Credits</th>
-      <th >Start Time</th>
-      <th >End Time</th>
-      <th >Remaining Slots</th>
-      <th >Capacity</th>
-      @if(Authorized){<th></th>}
+      <th >Department Name</th>
+      <th >Number of Courses</th>
+      <th>View Courses</th>
     </tr></thead>
   <tbody>
   
-        @foreach (var course in item.Courses)
+@if(Model.Departments.Count is 0)
+{
+  <p>No Departments available</p>
+}
+        @foreach (var item in Model.Departments)
         {
               <tr>
-                  <td>@course.Name</td>
-                  <td>@course.Title</td>
-                  <td>@course.Section</td>
-                <td>@course.Instructor</td>                    
-                  <td>@course.Credits</td>
-                  <td>@course.StartTime</td>
-                  <td>@course.EndTime</td>
-                  <td>@course.RemainingSlots</td>
-                  <td>@course.Capacity</td>
-                  @if(Authorized){
-                  <td>
-                      <a class="btn btn-danger btn-sm"
-                      asp-controller="Courses"
-                      asp-action="Delete"
-                      asp-route-id="@course.Id">Delete</a>
-                  </td>}
+                  <td>@item.Title</td>
+                  <td>@item.NumberOfCourses</td>
+                  <td> 
+
+                 <a class="btn btn-info btn-sm"
+                      asp-controller="Departments"
+                      asp-action="Details"
+                      asp-route-id="@item.Id"> Details
+                </a></td>
+               
                 </tr>
 
         }
   </tbody>
 </table><br>
-    }
-    
-    
-
-</div>
-</div>
-
+  
 }
+
+
+
 
 
 
