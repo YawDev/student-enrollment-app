@@ -1,4 +1,4 @@
 # student-enrollment-app
 
-![image](https://user-images.githubusercontent.com/94807175/148488984-ae8ee020-2b19-4363-af0e-367b36862bae.png)
+![image](https://user-images.githubusercontent.com/94807175/148489115-39867c83-5a4f-48b8-b7c4-08ff81763fc2.png)
 
