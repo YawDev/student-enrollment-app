@@ -1,38 +1,68 @@
 @model DepartmentDetailsDto
+@using Microsoft.AspNetCore.Identity
 @using StudentEnrollment.Core.Dtos;
+@using StudentEnrollment.Store.Enums
+@inject UserManager<RequestUser> UserManager
+@using StudentEnrollment.Entities
 
 
 @{
-    ViewData["Title"] = "Departments";
+    ViewData["Title"] = @Model.Title;
+    var Authorized = UserManager.GetUserAsync(User).Result.Permission == Permissions.AdminPermissions;
 }
 
-<div class="text-center">
-    <h1 class="display-4">@Model.Title</h1>
-</div>
 
-<P
-<br> </br>
-<h6>Instructors</h6>
-<table class="table">  <thead class="thead-light">
-
+       <br>
+<table class="table table-bordered">
+  <thead class="thead-light">
     <tr>
-         <th>Title</th>
-      <th >First</th>
-      <th >Last</th>
-     
+      <th >Name</th>
+      <th >Title</th>
+      <th >Section</th>
+      <th >Instructor</th>
+      <th >Credits</th>
+      <th >Start Time</th>
+      <th >End Time</th>
+      <th >Remaining Slots</th>
+      <th >Capacity</th>
+      <th></th>
     </tr></thead>
   <tbody>
-  
-        @foreach (var item in Model.Instructors)
+    @if(Model.Courses.Count is 0)
+    {
+      <p>No Courses available</p>
+    }
+        @foreach (var item in Model.Courses)
         {
+    
               <tr>
+                  <td>@item.Name</td>
                   <td>@item.Title</td>
-                  <td>@item.FirstName</td>
-                  <td> @item.LastName</td>
-                 
+                  <td>@item.Section</td>
+                <td>@item.Instructor</td>                    
+                  <td>@item.Credits</td>
+                  <td>@item.StartTime</td>
+                  <td>@item.EndTime</td>
+                  <td>@item.RemainingSlots</td>
+                  <td>@item.Capacity</td>
+                  @if(Authorized){
+                  <td>
+                      <a class="btn btn-danger btn-sm"
+                      asp-controller="Courses"
+                      asp-action="Delete"
+                      asp-route-id="@item.Id">Delete</a>
+                  </td>}
                 </tr>
-
         }
+        
+  </tbody>
+</table><br>
+ <a class="btn btn-info btn-sm"
+                      asp-controller="Departments"
+                      asp-action="Index">Back</a>
+</div>
+</div>
   </tbody>
 </table>
+
 
