@@ -1,0 +1,23 @@
+@model AdminDetailsDto
+@using  StudentEnrollment.Core.Dtos;
+
+@{
+    ViewData["Title"] = "Admin Portal";
+}
+
+
+<h2 style="text-align: center;">Admin's Portal</h2>
+<table class="table">
+  <thead class="thead-light">
+    <tr>
+      <th scope="col">First</th>
+      <th scope="col">Last</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>@Model.FirstName</td>
+      <td>@Model.LastName</td>
+    </tr>
+  </tbody>
+</table>

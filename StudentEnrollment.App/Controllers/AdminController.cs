@@ -6,6 +6,7 @@ using StudentEnrollment.App.Services;
 using StudentEnrollment.Core.Dtos;
 using StudentEnrollment.Core.Services;
 using StudentEnrollment.Entities;
+using StudentEnrollment.Store.Enums;
 
 namespace StudentEnrollment.App.Controllers
 {
@@ -23,6 +24,26 @@ namespace StudentEnrollment.App.Controllers
             _logger = logger;
             _apiService = ApiService;
             _userAuthService = userAuthService;
+        }
+
+        [HttpGet]
+        public IActionResult Details(string Id)
+        {
+             if(_userAuthService.IsSignedIn(User))
+            {
+                var currentUserId = _userAuthService.GetUserid(User);
+                if(currentUserId != Id || !_userAuthService.HasProperPermission(User, Permissions.AdminPermissions))
+                        return RedirectToAction("NotAuthorized","Accounts");
+
+                var response =  _apiService.GetResponse($"api/admin-portal/{Id}");
+                if(response.IsSuccessStatusCode)
+                {
+                    var adminDto = _apiService.GetDeserializedObject<AdminDetailsDto>(response);
+                    return View(adminDto);
+                }
+                return RedirectToAction("Notfound","Home");
+            }
+            return RedirectToAction("Login","Accounts");
         }
 
         [HttpGet]

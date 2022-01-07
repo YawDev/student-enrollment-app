@@ -143,7 +143,7 @@ namespace StudentEnrollment.App.Controllers
                             return RedirectToAction("Details","Instructors", new {id = id});
                     
                      if(_userAuthService.HasProperPermission(User, Permissions.AdminPermissions))
-                            return RedirectToAction("UnderConstruction","Home", new {id = id});
+                            return RedirectToAction("Details","Admin", new {id = id});
                 }
                 return RedirectToAction("Index", "Home");}
             catch (Exception ex)
