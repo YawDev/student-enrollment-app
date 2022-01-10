@@ -6,6 +6,6 @@ namespace StudentEnrollment.App.Models
 {
     public class CoursesViewModel
     {
-        public List<CourseDto> Courses { get; set; }  
+        public List<CourseDto> Courses { get; set; }
     }
 }

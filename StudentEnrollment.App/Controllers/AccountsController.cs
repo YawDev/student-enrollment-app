@@ -27,17 +27,22 @@ namespace StudentEnrollment.App.Controllers
     {
 
         private readonly ILogger<AccountsController> _logger;
-        private readonly IApiService _apiService;  
-        private readonly IUserAuthService _userAuthService;    
-     
+        private readonly IApiService _apiService;
+        private readonly IUserAuthService _userAuthService;
+
 
         public AccountsController(IUserAuthService userAuthService, ILogger<AccountsController> logger,
         IApiService ApiService)
         {
-           
+
             _logger = logger;
             _apiService = ApiService;
             _userAuthService = userAuthService;
+        }
+
+        public IActionResult ForgotPassword()
+        {
+            return View();
         }
 
         public IActionResult NotAuthorized()
@@ -55,11 +60,11 @@ namespace StudentEnrollment.App.Controllers
 
         public IActionResult Login()
         {
-             if (!_userAuthService.IsSignedIn(User))
+            if (!_userAuthService.IsSignedIn(User))
                 return View();
 
 
-            
+
             return RedirectToAction("Index", "Home");
 
         }
@@ -71,20 +76,20 @@ namespace StudentEnrollment.App.Controllers
             {
                 try
                 {
-                    var response =  _apiService.PostObjectResponse("api/login", loginDto);
-                   
-                    if(response.StatusCode == HttpStatusCode.InternalServerError) 
+                    var response = _apiService.PostObjectResponse("api/login", loginDto);
+
+                    if (response.StatusCode == HttpStatusCode.InternalServerError)
                         throw new Exception(response.ReasonPhrase);
 
-                    if(response.StatusCode == HttpStatusCode.BadRequest) 
+                    if (response.StatusCode == HttpStatusCode.BadRequest)
                         throw new DomainException(ErrorMessages.InvalidLogin);
 
-                    if(response.IsSuccessStatusCode)
+                    if (response.IsSuccessStatusCode)
                     {
-                        response =  _apiService.GetResponse($"api/users/{loginDto.UserName}");
-                        if(response.IsSuccessStatusCode)
+                        response = _apiService.GetResponse($"api/users/{loginDto.UserName}");
+                        if (response.IsSuccessStatusCode)
                         {
-                            var user =  _apiService.GetDeserializedObject<RequestUser>(response);
+                            var user = _apiService.GetDeserializedObject<RequestUser>(response);
                             await Task.Run(() => _userAuthService.SignInAsync(HttpContext, user));
                             return RedirectToAction("Index", "Departments");
                         }
@@ -101,7 +106,7 @@ namespace StudentEnrollment.App.Controllers
                 catch (Exception ex)
                 {
                     _logger.LogError(ex.Message);
-                    return RedirectToAction("ServerError","Home");
+                    return RedirectToAction("ServerError", "Home");
                 }
             }
             return View(loginDto);
@@ -118,12 +123,12 @@ namespace StudentEnrollment.App.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                    return RedirectToAction("ServerError","Home");
+                return RedirectToAction("ServerError", "Home");
             }
         }
-        
 
-        
+
+
         public IActionResult Account()
         {
             try
@@ -131,25 +136,26 @@ namespace StudentEnrollment.App.Controllers
                 if (_userAuthService.IsSignedIn(User))
                 {
                     var id = _userAuthService.GetUserid(User);
-                    var response  =  _apiService.GetResponse($"api/student-account/{id}");
+                    var response = _apiService.GetResponse($"api/student-account/{id}");
 
-                    if(response.IsSuccessStatusCode)
+                    if (response.IsSuccessStatusCode)
                     {
                         var detailsDto = _apiService.GetDeserializedObject<StudentDetailsDto>(response);
-                        return RedirectToAction("Details","Students", detailsDto);
+                        return RedirectToAction("Details", "Students", detailsDto);
                     }
 
-                    if(_userAuthService.HasProperPermission(User, Permissions.InstructorPermissions))
-                            return RedirectToAction("Details","Instructors", new {id = id});
-                    
-                     if(_userAuthService.HasProperPermission(User, Permissions.AdminPermissions))
-                            return RedirectToAction("Details","Admin", new {id = id});
+                    if (_userAuthService.HasProperPermission(User, Permissions.InstructorPermissions))
+                        return RedirectToAction("Details", "Instructors", new { id = id });
+
+                    if (_userAuthService.HasProperPermission(User, Permissions.AdminPermissions))
+                        return RedirectToAction("Details", "Admin", new { id = id });
                 }
-                return RedirectToAction("Index", "Home");}
+                return RedirectToAction("Index", "Home");
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                    return RedirectToAction("ServerError","Home");
+                return RedirectToAction("ServerError", "Home");
             }
         }
 
@@ -159,35 +165,36 @@ namespace StudentEnrollment.App.Controllers
             {
                 if (_userAuthService.IsSignedIn(User))
                 {
-                    if(!_userAuthService.AuthorizeUser("api/student-account", Permissions.StudentPermissions, Id, User))
-                            return RedirectToAction("NotAuthorized", "Accounts");
+                    if (!_userAuthService.AuthorizeUser("api/student-account", Permissions.StudentPermissions, Id, User))
+                        return RedirectToAction("NotAuthorized", "Accounts");
 
-                        return RedirectToAction("Transcript", new { id = Id });
-                    
+                    return RedirectToAction("Transcript", new { id = Id });
+
                 }
-                return RedirectToAction("Login", "Accounts");}
+                return RedirectToAction("Login", "Accounts");
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                    return RedirectToAction("ServerError","Home");
+                return RedirectToAction("ServerError", "Home");
             }
         }
 
         public IActionResult Transcript(Guid Id)
         {
-            if(_userAuthService.IsSignedIn(User))
+            if (_userAuthService.IsSignedIn(User))
             {
-                if(!_userAuthService.AuthorizeUser("api/student-account", Permissions.StudentPermissions, Id, User))
+                if (!_userAuthService.AuthorizeUser("api/student-account", Permissions.StudentPermissions, Id, User))
                     return RedirectToAction("NotAuthorized", "Accounts");
 
-                var response  =   _apiService.GetResponse($"api/my-enrollments/{Id}");
-                if(response.IsSuccessStatusCode)
+                var response = _apiService.GetResponse($"api/my-enrollments/{Id}");
+                if (response.IsSuccessStatusCode)
                 {
-                    var enrollmentDtos =  _apiService.GetDeserializedObject<List<EnrollmentDto>>(response);
-                    return View( new TranscriptViewModel{Enrollments=enrollmentDtos});
+                    var enrollmentDtos = _apiService.GetDeserializedObject<List<EnrollmentDto>>(response);
+                    return View(new TranscriptViewModel { Enrollments = enrollmentDtos });
                 }
-                return RedirectToAction("Notfound","Home");
-            }   
+                return RedirectToAction("Notfound", "Home");
+            }
             return RedirectToAction("Login", "Accounts");
 
         }
@@ -197,46 +204,46 @@ namespace StudentEnrollment.App.Controllers
         {
             if (_userAuthService.IsSignedIn(User))
             {
-                if(!_userAuthService.AuthorizeUser("api/student-account", Permissions.StudentPermissions, Id, User))
+                if (!_userAuthService.AuthorizeUser("api/student-account", Permissions.StudentPermissions, Id, User))
                     return RedirectToAction("NotAuthorized", "Accounts");
 
-                return View(new EnrollViewModel{Id = Id, Dto = new EnrollCourseDto()});
+                return View(new EnrollViewModel { Id = Id, Dto = new EnrollCourseDto() });
             }
-            
+
             return RedirectToAction("Login", "Accounts");
         }
 
         [HttpPost]
         public IActionResult Enroll(EnrollViewModel viewModel)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 try
                 {
                     if (_userAuthService.IsSignedIn(User))
                     {
                         var id = viewModel.Id;
-                        if(!_userAuthService.AuthorizeUser("api/student-account", Permissions.StudentPermissions, id, User))
+                        if (!_userAuthService.AuthorizeUser("api/student-account", Permissions.StudentPermissions, id, User))
                             return RedirectToAction("NotAuthorized", "Accounts");
 
-                        var response  =  _apiService.PostObjectResponse($"api/courses-enroll/{id}", viewModel.Dto);
+                        var response = _apiService.PostObjectResponse($"api/courses-enroll/{id}", viewModel.Dto);
 
-                        if(response.IsSuccessStatusCode)
-                            return RedirectToAction("Transcript", new {id = viewModel.Id});
-                    
+                        if (response.IsSuccessStatusCode)
+                            return RedirectToAction("Transcript", new { id = viewModel.Id });
+
                         ViewBag.Message = _apiService.GetApiResultMessage(response);
                         return View(viewModel);
                     }
-                return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Home");
                 }
-            
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                    return RedirectToAction("ServerError","Home");
+
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.Message);
+                    return RedirectToAction("ServerError", "Home");
+                }
             }
-        }
-        return View(viewModel);
+            return View(viewModel);
         }
     }
 }

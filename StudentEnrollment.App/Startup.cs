@@ -36,11 +36,12 @@ namespace StudentEnrollment.App
         {
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("localhost")));
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+               options.UseSqlServer(Configuration.GetConnectionString("localhost")));
             services.AddIdentity<RequestUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
-           
+
 
             services.AddScoped<IUserAuthService, UserAuthService>();
 
@@ -50,7 +51,7 @@ namespace StudentEnrollment.App
             services.AddControllersWithViews();
             services.AddRazorPages();
 
-            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -94,12 +95,14 @@ namespace StudentEnrollment.App
             {
                 options.BaseAddress = new Uri("https://localhost:9999/student-enrollment/");
             })
-            .ConfigureHttpMessageHandlerBuilder(builder => 
+            .ConfigureHttpMessageHandlerBuilder(builder =>
             {
                 builder.PrimaryHandler = new HttpClientHandler
                 {
-                    ServerCertificateCustomValidationCallback = (m ,cr,ch,e) => true
-                    ,UseProxy=false, Proxy=null
+                    ServerCertificateCustomValidationCallback = (m, cr, ch, e) => true
+                    ,
+                    UseProxy = false,
+                    Proxy = null
                 };
             });
         }

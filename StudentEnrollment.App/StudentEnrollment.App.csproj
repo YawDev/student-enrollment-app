@@ -5,16 +5,16 @@
     <UserSecretsId>aspnet-StudentEnrollment.App-9E0D930D-8F85-4082-A0F2-A31F62304C55</UserSecretsId>
   </PropertyGroup>
 
-
   <ItemGroup>
   <PackageReference Include="AutoMapper" Version="10.1.1" />
-  <PackageReference Include="CsvHelper" Version="24.0.0" />
-
+<PackageReference Include="CsvHelper" Version="27.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.1" />
+<PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+<PackageReference Include="MailKit" Version="3.0.0" />
 
 <ProjectReference Include="..\..\student-enrollment-store\StudentEnrollment.Store\StudentEnrollment.Store.csproj">
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
