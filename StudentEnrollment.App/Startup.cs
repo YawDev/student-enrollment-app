@@ -39,9 +39,12 @@ namespace StudentEnrollment.App
 
             services.AddDbContext<ApplicationDbContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("localhost")));
-            services.AddIdentity<RequestUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>()
+            services.AddIdentity<RequestUser, IdentityRole>(opt =>
+            opt.User.RequireUniqueEmail = true
+            ).AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
+            services.AddScoped<IEmailService, EmailService>();
 
             services.AddScoped<IUserAuthService, UserAuthService>();
 
