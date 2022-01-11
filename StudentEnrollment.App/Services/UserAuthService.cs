@@ -1,3 +1,4 @@
+using System.Net.Mail;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -17,14 +18,17 @@ namespace StudentEnrollment.App.Services
     public class UserAuthService : IUserAuthService
     {
         private readonly UserManager<RequestUser> _userManager;
-        private readonly SignInManager<RequestUser> _signInManager;    
+        private readonly SignInManager<RequestUser> _signInManager; 
+        private readonly IEmailService _emailService;   
         private readonly IApiService _apiService;       
 
-        public UserAuthService(UserManager<RequestUser> userManager,SignInManager<RequestUser> signInManager, IApiService apiService)
+        public UserAuthService(UserManager<RequestUser> userManager,SignInManager<RequestUser> signInManager, IApiService apiService,
+        IEmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _apiService = apiService;
+            _emailService = emailService;
         }
 
         public bool AuthorizeUser(string url, Permissions Type, Guid urlParameter,ClaimsPrincipal user)
@@ -94,5 +98,22 @@ namespace StudentEnrollment.App.Services
            return signedInUserId == userIdParameter;
         }
 
+        public async Task<RequestUser> FindUserByEmail(string email)
+        {
+            return await _userManager.FindByEmailAsync(email);
+            
+        }
+
+        public async Task<string> GeneratePasswordResetTokenAsync(RequestUser user)
+        {
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+        public Task SendPasswordResetLink(EmailTemplate template)
+        {
+            var message = _emailService.CreateEmailMessage(template);
+            return Task.Run(() => _emailService.SendMessage(message));
+
+        }
     }
 }

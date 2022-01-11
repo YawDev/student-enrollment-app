@@ -45,6 +45,34 @@ namespace StudentEnrollment.App.Controllers
             return View();
         }
 
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public  async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                var user = Task.Run(() =>_userAuthService.FindUserByEmail(model.Email));
+                if (user.Result != null)
+                {
+                    var token = await _userAuthService.GeneratePasswordResetTokenAsync(user.Result);
+                    var callback = Url.Action("ResetPassword", "Accounts", new { token, email = user.Result.Email }, Request.Scheme);
+                    var message = new EmailTemplate(new string[] { user.Result.Email }, "Reset password Link", callback);
+                    await _userAuthService.SendPasswordResetLink(message);
+                    return RedirectToAction("ForgotPasswordConfirmation");
+                }
+                ViewBag.Message = "User with email not found";
+                return View(model);
+            }
+            return View(model);
+        }
+
+        public IActionResult ForgotPasswordConfirmation()
+        {
+            return View();
+        }
+
         public IActionResult NotAuthorized()
         {
             return View();
