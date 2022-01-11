@@ -50,23 +50,31 @@ namespace StudentEnrollment.App.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public  async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
-        {
-            if(ModelState.IsValid)
+        {       
+            try
             {
-                var user = Task.Run(() =>_userAuthService.FindUserByEmail(model.Email));
-                if (user.Result != null)
+                if(ModelState.IsValid)
                 {
-                    var token = await _userAuthService.GeneratePasswordResetTokenAsync(user.Result);
-                    var callback = Url.Action("ResetPassword", "Accounts", new { token, email = user.Result.Email }, Request.Scheme);
-                    var message = new EmailTemplate(new string[] { user.Result.Email }, "Reset password Link", callback);
-                    await _userAuthService.SendPasswordResetLink(message);
-                    return RedirectToAction("ForgotPasswordConfirmation");
+                    var user = Task.Run(() =>_userAuthService.FindUserByEmail(model.Email));
+                    if (user.Result != null)
+                    {
+                         var token = await _userAuthService.GeneratePasswordResetTokenAsync(user.Result);
+                        var callback = Url.Action("ResetPassword", "Accounts", new { token, email = user.Result.Email }, Request.Scheme);
+                        var message = new EmailTemplate(new string[] { user.Result.Email }, "Reset password Link", callback);
+                        await _userAuthService.SendPasswordResetLink(message);
+                        return RedirectToAction("ForgotPasswordConfirmation");
+                    }
+                    ViewBag.Message = "User with email not found";
+                    return View(model);
+                    }
+                    return View(model);
                 }
-                ViewBag.Message = "User with email not found";
-                return View(model);
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.Message);
+                    return RedirectToAction("ServerError", "Home");
+                }
             }
-            return View(model);
-        }
 
         public IActionResult ForgotPasswordConfirmation()
         {
