@@ -40,6 +40,39 @@ namespace StudentEnrollment.App.Controllers
             _userAuthService = userAuthService;
         }
 
+        public IActionResult ResetPassword(string token, string email)
+        {
+            var model = new ResetPasswordModel() { Token = token, Email = email };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = Task.Run(() => _userAuthService.FindUserByEmail(model.Email));
+                if (user.Result != null)
+                {
+                    var result = await _userAuthService.ResetPassword(user.Result, model.Token, model.Password);
+                    if(!result.Succeeded)
+                    {
+                        foreach (var error in result.Errors)
+                            ModelState.TryAddModelError(error.Code, error.Description);
+                        
+                        return View(model);
+                    }
+                    return RedirectToAction(nameof(ResetPasswordConfirmation));
+                }
+            }
+            return View(model);
+        }
+
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
+        }
         public IActionResult ForgotPassword()
         {
             return View();
@@ -49,16 +82,16 @@ namespace StudentEnrollment.App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public  async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
-        {       
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
             try
             {
-                if(ModelState.IsValid)
+                if (ModelState.IsValid)
                 {
-                    var user = Task.Run(() =>_userAuthService.FindUserByEmail(model.Email));
+                    var user = Task.Run(() => _userAuthService.FindUserByEmail(model.Email));
                     if (user.Result != null)
                     {
-                         var token = await _userAuthService.GeneratePasswordResetTokenAsync(user.Result);
+                        var token = await _userAuthService.GeneratePasswordResetTokenAsync(user.Result);
                         var callback = Url.Action("ResetPassword", "Accounts", new { token, email = user.Result.Email }, Request.Scheme);
                         var message = new EmailTemplate(new string[] { user.Result.Email }, "Reset password Link", callback);
                         await _userAuthService.SendPasswordResetLink(message);
@@ -66,15 +99,15 @@ namespace StudentEnrollment.App.Controllers
                     }
                     ViewBag.Message = "User with email not found";
                     return View(model);
-                    }
-                    return View(model);
                 }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex.Message);
-                    return RedirectToAction("ServerError", "Home");
-                }
+                return View(model);
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return RedirectToAction("ServerError", "Home");
+            }
+        }
 
         public IActionResult ForgotPasswordConfirmation()
         {
