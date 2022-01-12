@@ -43,7 +43,45 @@ namespace StudentEnrollment.App.Controllers
 
         public IActionResult Search()
         {
+
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult Search(SearchModel model)
+        {
+            try
+            {
+                  var searchDto = new SearchCoursesDto()
+                    {
+                        Department = model.Department,
+                        Instructor = model.Instructor,
+                        Section = model.Section,
+                        Abbreviation = model.Abbreviation,
+                        CourseName = model.CourseName
+                    };
+
+                    var response = _apiService.PostObjectResponse("api/course-search", searchDto);
+                    if (response.StatusCode != HttpStatusCode.BadRequest && response.StatusCode != HttpStatusCode.InternalServerError)
+                    {   
+                        var courseDtos = _apiService.GetDeserializedObject<List<CourseDto>>(response);
+                        SearchResultsModel resultModel = new SearchResultsModel();
+                        resultModel.results = courseDtos;
+                        return View("SearchResults",courseDtos);
+                    }
+                        ViewBag.Message = "Please provide at least one value for search";
+                        return View(model);
+                }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return RedirectToAction("ServerError", "Home");
+            }
+        }
+
+        public IActionResult SearchResults(List<CourseDto> results)
+        {
+            return View(results);
         }
 
         public IActionResult UploadCourses()

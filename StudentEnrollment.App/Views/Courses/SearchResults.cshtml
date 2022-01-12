@@ -1,0 +1,56 @@
+@model List<CourseDto>
+@using StudentEnrollment.Core.Dtos;
+
+@{
+    ViewData["Title"] = "Search Results";
+}
+
+@if(!String.IsNullOrEmpty(ViewBag.Message))
+{
+     <div class="alert alert-danger" style="text-align: left;">@ViewBag.Message</div>
+}
+
+ <br>
+<table class="table table-bordered">
+  <thead class="thead-light">
+    <tr>
+      <th >Name</th>
+      <th >Title</th>
+      <th >Section</th>
+      <th >Instructor</th>
+      <th >Credits</th>
+      <th >Start Time</th>
+      <th >End Time</th>
+      <th >Remaining Slots</th>
+      <th >Capacity</th>
+    </tr></thead>
+  <tbody>
+    @if(Model.Count is 0)
+    {
+      <p>No Courses available</p>
+    }
+        @foreach (var item in Model)
+        {
+    
+              <tr>
+                  <td>@item.Name</td>
+                  <td>@item.Title</td>
+                  <td>@item.Section</td>
+                <td>@item.Instructor</td>                    
+                  <td>@item.Credits</td>
+                  <td>@item.StartTime</td>
+                  <td>@item.EndTime</td>
+                  <td>@item.RemainingSlots</td>
+                  <td>@item.Capacity</td>
+                </tr>
+        }
+        
+  </tbody>
+</table><br>
+ <a class="btn btn-info btn-sm"
+                      asp-controller="Courses"
+                      asp-action="Search">New Search</a>
+</div>
+</div>
+  </tbody>
+</table>
