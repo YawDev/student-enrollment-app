@@ -52,11 +52,27 @@ namespace StudentEnrollment.App.Controllers
         {
             if (ModelState.IsValid)
             {
-
+                var user = Task.Run(() => _userAuthService.FindUserByEmail(model.Email));
+                if (user.Result != null)
+                {
+                    var result = await _userAuthService.ResetPassword(user.Result, model.Token, model.Password);
+                    if(!result.Succeeded)
+                    {
+                        foreach (var error in result.Errors)
+                            ModelState.TryAddModelError(error.Code, error.Description);
+                        
+                        return View(model);
+                    }
+                    return RedirectToAction(nameof(ResetPasswordConfirmation));
+                }
             }
             return View(model);
         }
 
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
+        }
         public IActionResult ForgotPassword()
         {
             return View();

@@ -115,5 +115,10 @@ namespace StudentEnrollment.App.Services
             return Task.Run(() => _emailService.SendMessage(message));
 
         }
+
+        public  Task<IdentityResult> ResetPassword(RequestUser user, string token, string Password)
+        {
+            return Task.Run(() => _userManager.ResetPasswordAsync(user, token, Password));
+        }
     }
 }
