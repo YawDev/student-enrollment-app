@@ -44,6 +44,9 @@ namespace StudentEnrollment.App
             ).AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
+            services.Configure<DataProtectionTokenProviderOptions>(opt =>
+                opt.TokenLifespan = TimeSpan.FromMinutes(30));
+
             services.AddScoped<IEmailService, EmailService>();
 
             services.AddScoped<IUserAuthService, UserAuthService>();
