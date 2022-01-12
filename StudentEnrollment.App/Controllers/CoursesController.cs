@@ -41,6 +41,11 @@ namespace StudentEnrollment.App.Controllers
             _userAuthService = userAuthService;
         }
 
+        public IActionResult Search()
+        {
+            return View();
+        }
+
         public IActionResult UploadCourses()
         {
             if (!_userAuthService.IsSignedIn(User))
