@@ -43,25 +43,33 @@ namespace StudentEnrollment.App.Controllers
         [HttpPost]
         public IActionResult Register(AddInstructorDto addInstructorDto)
         {
-            var response =  _apiService.PostObjectResponse("api/instructors/register",addInstructorDto);
+            try{
+                
+                var response =  _apiService.PostObjectResponse("api/instructors/register",addInstructorDto);
 
-            if(response.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                ViewBag.Message = "Something went wrong while creating account."; return View(addInstructorDto); 
-            }
+                if(response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    ViewBag.Message = "Something went wrong while creating account."; return View(addInstructorDto); 
+                }
 
-            if(response.StatusCode == HttpStatusCode.BadRequest)
-            {
-                var message = _apiService.GetApiResultMessage(response);
-                ViewBag.Message = message; return View(addInstructorDto); 
-            } 
+                if(response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    var message = _apiService.GetApiResultMessage(response);
+                    ViewBag.Message = message; return View(addInstructorDto); 
+                } 
 
-            if(response.StatusCode == HttpStatusCode.Created)
-            {
-                ViewBag.Message = "Sign up has been successful"; return View(addInstructorDto); 
-            }   
+                if(response.StatusCode == HttpStatusCode.Created)
+                {
+                    ViewBag.Message = "Sign up has been successful"; return View(addInstructorDto); 
+                }   
             
-            return View(addInstructorDto);
+                return View(addInstructorDto);
+             }
+            catch(Exception ex)
+            {
+                 _logger.LogError(ex.Message);
+                return RedirectToAction("ServerError","Home");
+            }
         }
 
         public IActionResult Details(string Id)
