@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -57,25 +58,33 @@ namespace StudentEnrollment.App.Controllers
         [HttpPost]
         public IActionResult Register(AddAdminDto addAdminDto)
         {
-            var response =  _apiService.PostObjectResponse("api/admin/register", addAdminDto);
-
-            if(response.StatusCode == HttpStatusCode.InternalServerError)
+            try
             {
-                ViewBag.Message = "Something went wrong while creating account."; return View(addAdminDto); 
-            }
+                var response =  _apiService.PostObjectResponse("api/admin/register", addAdminDto);
 
-            if(response.StatusCode == HttpStatusCode.BadRequest)
-            {
-                 var message = _apiService.GetApiResultMessage(response);
-                ViewBag.Message = message; return View(addAdminDto); 
-            } 
+                if(response.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    ViewBag.Message = "Something went wrong while creating account."; return View(addAdminDto); 
+                }
 
-            if(response.StatusCode == HttpStatusCode.Created)
-            {
-                ViewBag.Message = "Sign up has been successful"; return View(addAdminDto); 
-            }        
+                if(response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    var message = _apiService.GetApiResultMessage(response);
+                    ViewBag.Message = message; return View(addAdminDto); 
+                } 
+
+                if(response.StatusCode == HttpStatusCode.Created)
+                {
+                    ViewBag.Message = "Sign up has been successful"; return View(addAdminDto); 
+                }        
             
-            return View(addAdminDto);
+                return View(addAdminDto);
+            }
+            catch(Exception ex)
+            {
+                 _logger.LogError(ex.Message);
+                return RedirectToAction("ServerError","Home");
+            }
         }
     }
 }

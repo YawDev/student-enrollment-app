@@ -41,6 +41,11 @@ namespace StudentEnrollment.App.Controllers
             _userAuthService = userAuthService;
         }
 
+        public IActionResult NoStaff()
+        {
+            return View();
+        }
+
         public IActionResult Search()
         {
 
@@ -217,6 +222,10 @@ namespace StudentEnrollment.App.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var Department = _apiService.GetDeserializedObject<DepartmentDto>(response);
+                if(Department.Instructors.Count == 0)
+                    return RedirectToAction("NoStaff");
+
+                
                 var ViewModel = CreateViewModel(Department);
                 return View(ViewModel);
             }
