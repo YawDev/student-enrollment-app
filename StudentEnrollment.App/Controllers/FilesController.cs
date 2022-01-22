@@ -94,7 +94,7 @@ namespace StudentEnrollment.App.Controllers
         }
 
         [HttpPost]
-        public IActionResult ConfirmDelete(FileContentsDto file)
+        public IActionResult Delete(FileContentsDto file)
         {
             try
             {
@@ -103,9 +103,10 @@ namespace StudentEnrollment.App.Controllers
                     if(!_userAuthService.HasProperPermission(User, Permissions.AdminPermissions)) 
                         return RedirectToAction("NotAuthorized", "Accounts");
 
+                        var sessionUserId = _userAuthService.GetUserid(User);
                         var response =  _apiService.DeleteResponse($"api/uploads/delete/{file.Id}");
                         if(response.IsSuccessStatusCode)
-                            return RedirectToAction("Index",new{id = file.RequestUserId});
+                            return RedirectToAction("Index",new{id = sessionUserId});
 
                     return RedirectToAction("Notfound","Home");
                     }

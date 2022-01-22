@@ -194,6 +194,45 @@ namespace StudentEnrollment.App.Controllers
             }
         }
 
+        public IActionResult DeleteUploadLog(Guid id)
+        {
+            try
+            {
+                var response = _apiService.GetResponse($"api/upload/log/{id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var log = _apiService.GetDeserializedObject<UploadCoursesLogDto>(response);
+                    return View(log);
+                }
+                return RedirectToAction("Notfound", "Home");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return RedirectToAction("ServerError", "Home");
+            }
+        }
+
+        [HttpPost]
+         public IActionResult DeleteUploadLog(UploadCoursesLogDto logDto)
+        {
+            try
+            {
+                var response = _apiService.DeleteResponse($"api/logs/delete/{logDto.Id}");
+                if (response.IsSuccessStatusCode)
+                {
+                   return RedirectToAction(nameof(UploadCourseLogs));
+                }
+                return RedirectToAction("Notfound", "Home");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return RedirectToAction("ServerError", "Home");
+            }
+        }
+
+
 
         [HttpPost]
         public IActionResult Delete(CourseDto courseDto)

@@ -19,6 +19,7 @@
       <th scope="col">Upload Date</th>
       <th scope="col">Status</th>
         <th scope="col">Errors</th>
+        <th></th>
     </tr>
   <tbody>
 
@@ -43,7 +44,7 @@
       @if(item.Errors.Count > 0)
       {
         <td>
-            <a class="btn btn-danger btn-sm" 
+            <a class="btn btn-info btn-sm" 
                       asp-controller="Courses"
                       asp-action="LogErrors"
                       asp-route-id="@item.Id"> View Errors</a>
@@ -53,6 +54,12 @@
       {
         <td>No Errors</td>
       }
+      <td>
+            <a class="btn btn-danger btn-sm" 
+                      asp-controller="Courses"
+                      asp-action="DeleteUploadLog"
+                      asp-route-id="@item.Id"> Delete Log</a>
+           </td>
     </tr>
         }
   </tbody>
