@@ -1,0 +1,25 @@
+@model FileContentsDto
+@using StudentEnrollment.Core.Dtos;
+@using Microsoft.AspNetCore.Identity
+@using StudentEnrollment.Entities
+
+@{
+    ViewData["Title"] = "Delete File?";
+
+}
+            <div class="alert alert-danger">Are you sure you want to delete this file?
+    </div>
+       
+
+
+
+        <form asp-action="Delete" asp-route-id="@Model.Id" method="post" role="form">
+
+
+                
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a class="btn btn-info"
+                        asp-controller="Files"
+                        asp-route-id="@Model.RequestUserId"
+                        asp-action="Index">Cancel</a><br>
+        </form>

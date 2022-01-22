@@ -44,5 +44,80 @@ namespace StudentEnrollment.App.Controllers
             }
             return RedirectToAction("Login","Accounts");
         }
+
+
+        [HttpGet]
+        public IActionResult ViewFile(Guid id)
+        {
+            if(_userAuthService.IsSignedIn(User))
+            {
+                var currentUserId = _userAuthService.GetUserid(User);
+                if(!_userAuthService.HasProperPermission(User, Permissions.AdminPermissions))
+                        return RedirectToAction("NotAuthorized","Accounts");
+
+                var response =  _apiService.GetResponse($"api/filecontent/{id}");
+                if(response.IsSuccessStatusCode)
+                {
+                    var fileDto = _apiService.GetDeserializedObject<FileContentsDto>(response);
+                    return View(fileDto);
+                }
+                return RedirectToAction("Notfound","Home");
+            }
+            return RedirectToAction("Login","Accounts");
+        }
+
+
+        public IActionResult Delete(Guid id)
+        {
+            try
+            {
+                if(_userAuthService.IsSignedIn(User))
+                {
+                    if(!_userAuthService.HasProperPermission(User, Permissions.AdminPermissions)) 
+                        return RedirectToAction("NotAuthorized", "Accounts");
+
+                        var response =  _apiService.GetResponse($"api/filecontent/{id}");
+                        if(response.IsSuccessStatusCode)
+                        {
+                            var file = _apiService.GetDeserializedObject<FileContentsDto>(response);
+                            return View(file);
+                        }
+                    return RedirectToAction("Notfound","Home");
+                    }
+                    return RedirectToAction("NotAuthorized", "Accounts");
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogError(ex.Message);
+                    return RedirectToAction("ServerError","Home");
+                }
+        }
+
+        [HttpPost]
+        public IActionResult Delete(FileContentsDto file)
+        {
+            try
+            {
+                if(_userAuthService.IsSignedIn(User))
+                {
+                    if(!_userAuthService.HasProperPermission(User, Permissions.AdminPermissions)) 
+                        return RedirectToAction("NotAuthorized", "Accounts");
+
+                        var sessionUserId = _userAuthService.GetUserid(User);
+                        var response =  _apiService.DeleteResponse($"api/uploads/delete/{file.Id}");
+                        if(response.IsSuccessStatusCode)
+                            return RedirectToAction("Index",new{id = sessionUserId});
+
+                    return RedirectToAction("Notfound","Home");
+                    }
+                    return RedirectToAction("NotAuthorized", "Accounts");
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogError(ex.Message);
+                    return RedirectToAction("ServerError","Home");
+                }
+        }
+
     }
 }

@@ -1,0 +1,18 @@
+@model UploadCoursesLogDto
+@using StudentEnrollment.Core.Dtos;
+
+
+@{
+    ViewData["Title"] = "Delete Log?";
+}
+            <div class="alert alert-danger">Are you sure you want to delete File Upload Log?
+    </div>
+       
+
+
+
+        <form asp-action="DeleteUploadLog" asp-route-id="@Model.Id" method="post" role="form">
+            <button type="submit" class="btn btn">Confirm</button>
+            <a class="btn btn-info"
+                        asp-action="UploadCourseLogs">Cancel</a><br>
+        </form>
