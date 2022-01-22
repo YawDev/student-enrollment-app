@@ -30,7 +30,7 @@ namespace StudentEnrollment.App.Controllers
         [HttpGet]
         public IActionResult Details(string Id)
         {
-             if(_userAuthService.IsSignedIn(User))
+            if(_userAuthService.IsSignedIn(User))
             {
                 var currentUserId = _userAuthService.GetUserid(User);
                 if(currentUserId != Id || !_userAuthService.HasProperPermission(User, Permissions.AdminPermissions))

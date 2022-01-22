@@ -7,6 +7,7 @@
 @{
     ViewData["Title"] = "Departments";
     var Authorized = UserManager.GetUserAsync(User).Result.Permission == Permissions.AdminPermissions;
+    var userId =  UserManager.GetUserId(User);
 }
 
 <style>
@@ -64,6 +65,13 @@ asp-controller="Courses"
 asp-action="UploadCourseLogs"> Check Upload Status
                 </a>
 
+     
+<a class="btn btn-info btn-sm"
+asp-controller="Files"
+asp-action="Index"
+asp-route-id=@userId > View Files 
+</a>
+
 }
      
 <br> </br>
@@ -109,8 +117,7 @@ asp-action="UploadCourseLogs"> Check Upload Status
                       asp-action="Add"
                       asp-route-id="@item.Id" > Add Course 
                   </a>
-                     
-                  
+                
                   
                 </td>
                 </tr>

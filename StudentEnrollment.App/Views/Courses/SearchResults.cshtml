@@ -25,10 +25,9 @@
       <th >Capacity</th>
     </tr></thead>
   <tbody>
-    @if(Model.Count is 0)
-    {
-      <p>No Courses available</p>
-    }
+  
+      <p>@Model.Count Result(s)</p>
+    
         @foreach (var item in Model)
         {
     
