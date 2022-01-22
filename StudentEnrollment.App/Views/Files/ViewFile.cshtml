@@ -1,0 +1,34 @@
+@{
+    ViewData["Title"] = "View File";
+}
+
+@model FileContentsDto
+@using StudentEnrollment.Core.Dtos;
+
+<h2>File Content</h2>
+<br>
+<table class="table table-bordered">
+  <thead class="thead-light">
+    <tr>
+      @foreach (var col in @Model.ColumnHeaders)
+      {
+        <th>@col</th>
+      }
+    </tr></thead>
+  <tbody>
+    @foreach (var item in @Model.DelimitedContent)
+    {
+      var separatedValues = item.Split(",");
+      <tr>
+      @foreach (var separatedValue in separatedValues)
+      {
+      
+          <td>@separatedValue</td>
+        
+      }</tr>
+    }
+          
+  </tbody>
+</table>
+
+

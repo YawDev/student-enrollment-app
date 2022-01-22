@@ -1,4 +1,44 @@
+@model List<FileQueryResultDto>
+@using StudentEnrollment.Core.Dtos;
+
+
 @{
     ViewData["Title"] = "Uploaded Files";
 }
+
+
+<h2>Files</h2>
+<br>
+<table class="table table-bordered">
+  <thead class="thead-light">
+    <tr>
+     
+        <th>File Name</th>
+        <th>Upload Date</th>
+        <th></th>
+        <th></th>
+    </tr></thead>
+  <tbody>
+      @foreach (var item in Model)
+      {
+          <tr>
+              <td>@item.FileName</td>
+              <td>@item.UploadDate</td>
+              <td>
+                   <a class="btn btn-info btn-sm"
+                      asp-controller="Files"
+                      asp-action="ViewFile"
+                      asp-route-id="@item.FileId">View File</a>
+              </td>
+              <td>
+                    <a class="btn btn-danger btn-sm"
+                      asp-controller="Files"
+                      asp-action="Delete"
+                      asp-route-id="@item.FileId">Delete</a>
+              </td>
+          </tr>
+      }
+  </tbody>
+</table>
+
 
