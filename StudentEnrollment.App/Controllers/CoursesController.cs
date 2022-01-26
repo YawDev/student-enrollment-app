@@ -59,23 +59,24 @@ namespace StudentEnrollment.App.Controllers
             {
                   var searchDto = new SearchCoursesDto()
                     {
-                        Department = model.Department,
-                        Instructor = model.Instructor,
-                        Section = model.Section,
-                        Abbreviation = model.Abbreviation,
-                        CourseName = model.CourseName
+                       Keyword = model.Keywords
                     };
 
                     var response = _apiService.PostObjectResponse("api/course-search", searchDto);
-                    if (response.StatusCode != HttpStatusCode.BadRequest && response.StatusCode != HttpStatusCode.InternalServerError)
+                    if (response.StatusCode == HttpStatusCode.OK)
                     {   
                         var courseDtos = _apiService.GetDeserializedObject<List<CourseDto>>(response);
                         SearchResultsModel resultModel = new SearchResultsModel();
                         resultModel.results = courseDtos;
-                        return View("SearchResults",courseDtos);
+                        resultModel.keyword = searchDto.Keyword;
+                        return View("SearchResults",resultModel);
                     }
-                        ViewBag.Message = "Please provide at least one value for search";
-                        return View(model);
+                    if(response.StatusCode == HttpStatusCode.BadRequest)
+                        ViewBag.Message = "Please provide a search keyword.";
+                    else
+                        ViewBag.Message = "Something went wrong.";
+
+                    return View(model);
                 }
             catch (Exception ex)
             {
@@ -84,9 +85,9 @@ namespace StudentEnrollment.App.Controllers
             }
         }
 
-        public IActionResult SearchResults(List<CourseDto> results)
+        public IActionResult SearchResults(SearchResultsModel model)
         {
-            return View(results);
+            return View(model);
         }
 
         public IActionResult UploadCourses()

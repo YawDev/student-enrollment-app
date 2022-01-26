@@ -1,4 +1,4 @@
-@model List<CourseDto>
+@model SearchResultsModel
 @using StudentEnrollment.Core.Dtos;
 
 @{
@@ -26,9 +26,9 @@
     </tr></thead>
   <tbody>
   
-      <p>@Model.Count Result(s)</p>
+      <p>@Model.results.Count Result(s) for "@Model.keyword"</p>
     
-        @foreach (var item in Model)
+        @foreach (var item in Model.results)
         {
     
               <tr>
