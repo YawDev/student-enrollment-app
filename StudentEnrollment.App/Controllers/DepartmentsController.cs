@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
+using System.Linq;
 using System.Threading.Tasks;
 using ControllerHelpers;
 using Microsoft.AspNetCore.Identity;
@@ -44,6 +45,7 @@ namespace StudentEnrollment.App.Controllers
                     if(response.IsSuccessStatusCode)
                     {
                         var departments =  _apiService.GetDeserializedObject<List<DepartmentDto>>(response);
+                        
                         return View(new DepartmentsViewModel(){Departments=departments, AddDepartmentDto= new AddDepartmentDto()});
                     }
                     var result = _apiService.GetApiResultMessage(response);
@@ -146,7 +148,7 @@ namespace StudentEnrollment.App.Controllers
         }
 
     
-        public IActionResult Details(Guid id)
+        public IActionResult Details(Guid id, int pg=1, int pageSize=3)
         {
             try
                 {
@@ -157,6 +159,12 @@ namespace StudentEnrollment.App.Controllers
                         if(response.IsSuccessStatusCode)
                         {
                             var department = _apiService.GetDeserializedObject<DepartmentDetailsDto>(response);
+                         
+                            
+                            PaginatedList<CourseDto> courses = new PaginatedList<CourseDto>(department.Courses, pg, pageSize);
+                            var pager = new PagerModel(id, courses.TotalRecords, pg, pageSize);
+                            this.ViewBag.Pager = pager;
+                            department.Courses = courses;
                             return View(department);
                         }
                     return RedirectToAction("Notfound","Home");

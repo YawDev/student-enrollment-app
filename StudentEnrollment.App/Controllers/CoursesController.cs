@@ -19,6 +19,7 @@ using StudentEnrollment.Core.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using StudentEnrollment.Entities;
 using StudentEnrollment.Core.Services;
+using System.Linq;
 
 namespace StudentEnrollment.App.Controllers
 {
@@ -87,6 +88,7 @@ namespace StudentEnrollment.App.Controllers
 
         public IActionResult SearchResults(SearchResultsModel model)
         {
+           
             return View(model);
         }
 
