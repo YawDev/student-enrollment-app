@@ -1,44 +1,54 @@
-@model LoginDto
+@model IdentityAuthDto
 @using StudentEnrollment.Core.Dtos;
 
 @{
     ViewData["Title"] = "Login";
 }
 
-<style>
-    .form-control {
-        min-width: 0;
-        width: auto;
-        display: inline;
-    }
-</style>
 
 @if (!string.IsNullOrEmpty(ViewBag.Message))
 {
     <div class="alert alert-danger">@ViewBag.Message</div>
 }
 
-<form asp-action="Login" method="post" role="form">
+<div class="col-md-10 offset-1-md-1">
+    <section>
+        <div class="login-form-icon">
+            <i class="fas fa-user-circle fa-5x text-secondary"></i>
+        </div>
+        <form id="account" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="UserName">Username
+                </label>
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label asp-for="RememberMe">
+                        <input asp-for="RememberMe" />
+                        @Html.DisplayNameFor(m => m.RememberMe)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">Log in</button>
+            </div>
+            <div class="form-group">
+                <p>
+                    <a asp-controller="Accounts" asp-action="ForgotPassword">Forgot your password?</a>
+                </p>
+            </div>
+        </form>
+    </section>
+</div>
 
-
-    <h4 style="color: white;">Portal Login</h4><br>
-
-    <div class="form-group">
-
-        <label asp-for="UserName">Username </label>
-        <input asp-for="UserName" class="form-control" />
-        <span asp-validation-for="UserName" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Password">Password </label>
-        <input asp-for="Password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div><br>
-
-
-
-    <button type="submit" class="btn btn-primary">Sign In</button><br>
-</form>
-<br></br>
-<a asp-controller="Accounts" asp-action="ForgotPassword">Forgot Password?</a>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
