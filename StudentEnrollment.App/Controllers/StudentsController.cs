@@ -38,7 +38,7 @@ namespace StudentEnrollment.App.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(AddStudentDto addStudentDto)
+        public IActionResult Register(StudentSignUpDto addStudentDto)
         {
             try
             {
