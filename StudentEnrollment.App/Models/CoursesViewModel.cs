@@ -8,4 +8,11 @@ namespace StudentEnrollment.App.Models
     {
         public List<CourseDto> Courses { get; set; }
     }
+
+    public class FilesViewModel
+    {
+        public string Id {get;set;}
+        public List<FileQueryResultDto> Files { get; set; }
+        
+    }
 }

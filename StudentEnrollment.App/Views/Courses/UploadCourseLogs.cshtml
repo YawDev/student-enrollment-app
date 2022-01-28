@@ -4,6 +4,8 @@
 
 @{
     ViewData["Title"] = "Uploads";
+    PagerModel pager = ViewBag.Pager;
+
 }
  <a class="btn btn-info btn-sm"
                       asp-controller="Departments"
@@ -69,3 +71,9 @@ else
 {
   <p>No Uploads are available.</p>
 }
+
+<div class="row">
+  <div class="col-12">
+    <partial name="_Pagination" model="@pager"/>
+  </div>
+</div>
