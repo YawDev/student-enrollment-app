@@ -5,6 +5,7 @@ namespace StudentEnrollment.App.Models
     public class PagerModel
     {
         public Guid Id {get; private set;}
+        public string RequestId { get; set; }
         public int TotalItems { get; private set; }
         public int CurrentIndex { get; private set; }
         public int PageSize { get; private set; }
@@ -31,6 +32,16 @@ namespace StudentEnrollment.App.Models
             PageSize = pagesize;
             TotalPages = (int)Math.Ceiling((decimal)totalItems/(decimal)pagesize);
             Id = id;
+            SetPagesAndRecords();
+        }
+
+        public PagerModel(string requestUserId, int totalItems, int currentindex, int pagesize=5)
+        {
+            TotalItems = totalItems;
+            CurrentIndex = currentindex;
+            PageSize = pagesize;
+            TotalPages = (int)Math.Ceiling((decimal)totalItems/(decimal)pagesize);
+            RequestId = requestUserId;
             SetPagesAndRecords();
         }
 

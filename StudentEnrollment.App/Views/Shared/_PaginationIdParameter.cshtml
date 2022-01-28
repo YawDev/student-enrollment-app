@@ -7,12 +7,14 @@
         {
             <li class="page-item">
                  <a class="page-link" asp-action="@Model.Action"
+                asp-route-id="@Model.Id"
                 asp-route-pg="1"
                 asp-route-pageSize="@Model.PageSize">First
                 </a>
             </li>
             <li class="page-item">
                  <a class="page-link" asp-action="@Model.Action"
+                asp-route-id="@Model.Id"
                 asp-route-pg="@(Model.CurrentIndex - 1)"
                 asp-route-pageSize="@Model.PageSize">Previous
                 </a>
@@ -24,6 +26,7 @@
         {
             <li class="page-item @(pg == Model.CurrentIndex?"active":"")">
                 <a class="page-link" asp-action="@Model.Action"
+                asp-route-id="@Model.Id"
                 asp-route-pg="@pg"
                 asp-route-pageSize="@Model.PageSize">@pg
                 </a>
@@ -34,12 +37,14 @@
         {
             <li class="page-item">
                  <a class="page-link" asp-action="@Model.Action"
+                asp-route-id="@Model.Id"
                 asp-route-pg="@(Model.CurrentIndex + 1)"
                 asp-route-pageSize="@Model.PageSize">Next
                 </a>
             </li>
             <li class="page-item">
                  <a class="page-link" asp-action="@Model.Action"
+                asp-route-id="@Model.Id"
                 asp-route-pg="@(Model.TotalPages)"
                 asp-route-pageSize="@Model.PageSize">Last
                 </a>

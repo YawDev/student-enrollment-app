@@ -144,7 +144,7 @@ namespace StudentEnrollment.App.Controllers
         }
 
         [HttpGet]
-        public IActionResult UploadCourseLogs()
+        public IActionResult UploadCourseLogs(int pg=1, int pageSize=3)
         {
             var userid = _userAuthService.GetUserid(User);
             if (_userAuthService.IsSignedIn(User))
@@ -153,6 +153,10 @@ namespace StudentEnrollment.App.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     var UploadLogs = _apiService.GetDeserializedObject<List<UploadCoursesLogDto>>(response);
+                    PaginatedList<UploadCoursesLogDto> logs = new PaginatedList<UploadCoursesLogDto>(UploadLogs, pg, pageSize);
+                    var pager = new PagerModel(logs.TotalRecords, pg, pageSize);
+                    this.ViewBag.Pager = pager; pager.Action = nameof(UploadCourseLogs);
+                    UploadLogs = logs;
                     return View(new UploadStatusViewModel { uploads = UploadLogs });
                 }
             }

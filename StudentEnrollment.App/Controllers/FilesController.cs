@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using StudentEnrollment.App.Models;
 using StudentEnrollment.App.Services;
 using StudentEnrollment.Core.Dtos;
 using StudentEnrollment.Core.Services;
@@ -26,19 +27,25 @@ namespace StudentEnrollment.App.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(string id)
+        public IActionResult Index(int pg=1, int pageSize=3)
         {
             if(_userAuthService.IsSignedIn(User))
             {
                 var currentUserId = _userAuthService.GetUserid(User);
-                if(currentUserId != id || !_userAuthService.HasProperPermission(User, Permissions.AdminPermissions))
+                if(!_userAuthService.HasProperPermission(User, Permissions.AdminPermissions))
                         return RedirectToAction("NotAuthorized","Accounts");
 
-                var response =  _apiService.GetResponse($"api/files/{id}");
+                var response =  _apiService.GetResponse($"api/files/{currentUserId}");
                 if(response.IsSuccessStatusCode)
                 {
                     var results = _apiService.GetDeserializedObject<List<FileQueryResultDto>>(response);
-                    return View(results);
+                    PaginatedList<FileQueryResultDto> files = new PaginatedList<FileQueryResultDto>(results, pg, pageSize);
+                    var pager = new PagerModel(files.TotalRecords, pg, pageSize);
+                    this.ViewBag.Pager = pager; pager.Action = nameof(Index);
+                    results = files;
+                    var model = new FilesViewModel();
+                    model.Files = results;
+                    return View(model);
                 }
                 return RedirectToAction("Notfound","Home");
             }
