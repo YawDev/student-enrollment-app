@@ -139,13 +139,13 @@ namespace StudentEnrollment.App.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> LoginAsync(LoginDto loginDto)
+        public async Task<IActionResult> LoginAsync(IdentityAuthDto authDto)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var response = _apiService.PostObjectResponse("api/login", loginDto);
+                    var response = _apiService.PostObjectResponse("api/login", authDto);
 
                     if (response.StatusCode == HttpStatusCode.InternalServerError)
                         throw new Exception(response.ReasonPhrase);
@@ -155,7 +155,7 @@ namespace StudentEnrollment.App.Controllers
 
                     if (response.IsSuccessStatusCode)
                     {
-                        response = _apiService.GetResponse($"api/users/{loginDto.UserName}");
+                        response = _apiService.GetResponse($"api/users/{authDto.UserName}");
                         if (response.IsSuccessStatusCode)
                         {
                             var user = _apiService.GetDeserializedObject<RequestUser>(response);
@@ -163,14 +163,14 @@ namespace StudentEnrollment.App.Controllers
                             return RedirectToAction("Index", "Departments");
                         }
                     }
-                    return View(loginDto);
+                    return View(authDto);
 
                 }
                 catch (DomainException ex)
                 {
                     _logger.LogError(ex.Message);
                     ModelState.AddModelError("Error", ex.Message); ViewBag.Message = ex.Message;
-                    return View(loginDto);
+                    return View(authDto);
                 }
                 catch (Exception ex)
                 {
@@ -178,7 +178,7 @@ namespace StudentEnrollment.App.Controllers
                     return RedirectToAction("ServerError", "Home");
                 }
             }
-            return View(loginDto);
+            return View(authDto);
         }
 
 
