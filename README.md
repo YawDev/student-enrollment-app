@@ -1,6 +1,5 @@
-# student-enrollment-app
+# Student Management App using Asp .Net Core Mvc
 
-# Student Management System using Asp .Net Core Mvc
 
 ![image](https://user-images.githubusercontent.com/94807175/151632905-bdf52090-d817-4d9a-989d-0335c9e4dc90.png)
 
