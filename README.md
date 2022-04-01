@@ -1,4 +1,4 @@
-# Student Management System with Asp .Net Core 5 MVC
+# Student Management System with Asp.Net Core 5 MVC
 
 
 ![image](https://user-images.githubusercontent.com/94807175/151632905-bdf52090-d817-4d9a-989d-0335c9e4dc90.png)
@@ -13,4 +13,6 @@
 
 ![image](https://user-images.githubusercontent.com/94807175/148489184-3e24458e-c37f-49a3-8738-6ee0d59eba2f.png)
 
+# Database
 
+SQL-Server with Entity Framework
