@@ -1,5 +1,7 @@
 # student-enrollment-app
 
+# Student Management System using ASP.NET CORE MVC integrated with Web APIs and Entity Framework
+
 ![image](https://user-images.githubusercontent.com/94807175/151632905-bdf52090-d817-4d9a-989d-0335c9e4dc90.png)
 
 ![image](https://user-images.githubusercontent.com/94807175/151632640-0c71f5a1-fcce-46f5-9808-eea6deb8ad7f.png)
